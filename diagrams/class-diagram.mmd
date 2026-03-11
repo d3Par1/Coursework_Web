@@ -1,0 +1,83 @@
+classDiagram
+    class User {
+        +int id
+        +String email
+        +String password_hash
+        +String name
+        +DateTime created_at
+        +create(email, password_hash, name) User
+        +findByEmail(email) User
+        +findById(id) User
+    }
+
+    class Account {
+        +int id
+        +int user_id
+        +String name
+        +String type
+        +String currency
+        +float balance
+        +DateTime created_at
+        +create(user_id, name, type, currency) Account
+        +findByUserId(user_id) Account[]
+        +findById(id) Account
+        +update(id, name, type, currency) Account
+        +delete(id) void
+        +updateBalance(id, amount) void
+    }
+
+    class Category {
+        +int id
+        +int user_id
+        +String name
+        +String type
+        +String icon
+        +String color
+        +create(user_id, name, type, icon, color) Category
+        +findByUserId(user_id) Category[]
+        +findSystem() Category[]
+        +findById(id) Category
+        +update(id, name, type, icon, color) Category
+        +delete(id) void
+    }
+
+    class Transaction {
+        +int id
+        +int user_id
+        +int account_id
+        +int category_id
+        +String type
+        +float amount
+        +String description
+        +Date date
+        +DateTime created_at
+        +create(user_id, account_id, category_id, type, amount, description, date) Transaction
+        +findByUserId(user_id) Transaction[]
+        +findFiltered(user_id, filters) Transaction[]
+        +findById(id) Transaction
+        +update(id, data) Transaction
+        +delete(id) void
+    }
+
+    class Budget {
+        +int id
+        +int user_id
+        +int category_id
+        +String month
+        +float limit_amount
+        +create(user_id, category_id, month, limit_amount) Budget
+        +findByUserId(user_id) Budget[]
+        +findByMonth(user_id, month) Budget[]
+        +findById(id) Budget
+        +update(id, limit_amount) Budget
+        +delete(id) void
+        +getSpent(user_id, category_id, month) float
+    }
+
+    User "1" --> "*" Account : owns
+    User "1" --> "*" Transaction : creates
+    User "1" --> "*" Budget : sets
+    User "1" --> "*" Category : defines
+    Account "1" --> "*" Transaction : contains
+    Category "1" --> "*" Transaction : classifies
+    Category "1" --> "*" Budget : limits

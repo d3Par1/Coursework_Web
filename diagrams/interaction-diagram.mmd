@@ -1,0 +1,40 @@
+sequenceDiagram
+    actor User
+    participant Browser
+    participant Router as Express Router<br/>(POST /transactions)
+    participant Validator as express-validator<br/>(Validation Chain)
+    participant Model as Transaction Model
+    participant DB as SQLite Database
+    participant View as EJS View Engine
+
+    User->>Browser: Fill transaction form<br/>(account, category, amount, date)
+    Browser->>Router: POST /transactions<br/>(form data in request body)
+
+    Router->>Validator: Run validation chains<br/>(amount > 0, date required,<br/>account_id, category_id)
+    Validator-->>Router: Validation result
+
+    alt Validation Failed
+        Router->>View: Render transactions/new.ejs<br/>(errors + old input)
+        View-->>Browser: HTML with error messages<br/>(422 Unprocessable Entity)
+        Browser-->>User: Display form with<br/>field-level errors
+    else Validation Passed
+        Router->>Model: Transaction.create()<br/>(user_id, account_id, category_id,<br/>type, amount, description, date)
+        Model->>DB: INSERT INTO transactions<br/>(...)
+        DB-->>Model: Success (lastInsertRowid)
+        Model->>DB: UPDATE accounts<br/>SET balance = balance +/- amount<br/>WHERE id = account_id
+        DB-->>Model: Balance updated
+        Model-->>Router: Created transaction object
+
+        Router->>Router: req.flash('success',<br/>'Transaction added')
+        Router-->>Browser: 302 Redirect<br/>GET /transactions
+
+        Browser->>Router: GET /transactions
+        Router->>Model: Transaction.findByUserId()<br/>(with pagination/filters)
+        Model->>DB: SELECT * FROM transactions<br/>WHERE user_id = ?<br/>ORDER BY date DESC
+        DB-->>Model: Transaction rows
+        Model-->>Router: Transaction list
+
+        Router->>View: Render transactions/index.ejs<br/>(transactions, flash message)
+        View-->>Browser: HTML with transaction list<br/>and success alert
+        Browser-->>User: Display updated<br/>transaction list
+    end
