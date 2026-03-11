@@ -1,1 +1,36 @@
 /* Custom styles for Finance Manager */
+
+/* Ensure footer stays at bottom */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* Card hover effect */
+.card {
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+/* Navbar brand icon spacing */
+.navbar-brand i {
+  margin-right: 0.25rem;
+}
+
+/* Table rows pointer cursor when clickable */
+.table-hover tbody tr {
+  cursor: default;
+}
+
+/* Progress bar styling for budgets */
+.progress {
+  border-radius: 0.5rem;
+}

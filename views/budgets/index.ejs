@@ -1,2 +1,26 @@
-<h1 class="mb-4">Budgets</h1>
-<p class="text-muted">Coming soon - budget tracking will be displayed here.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><i class="bi bi-piggy-bank"></i> Budgets</h1>
+  <button class="btn btn-primary" disabled>
+    <i class="bi bi-plus-lg"></i> Set Budget
+  </button>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">Monthly Budgets</h5>
+  </div>
+  <div class="card-body">
+    <!-- Example placeholder budget progress bars -->
+    <div class="mb-3">
+      <div class="d-flex justify-content-between mb-1">
+        <span class="text-muted">No budgets set</span>
+      </div>
+      <div class="progress" style="height: 20px;">
+        <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%">
+          0%
+        </div>
+      </div>
+    </div>
+    <p class="text-muted text-center py-3">Set your first budget to track spending by category.</p>
+  </div>
+</div>
