@@ -1,35 +1,235 @@
-<h1 class="mb-4"><i class="bi bi-tags"></i> Categories</h1>
+<%# views/categories/index.ejs %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><i class="bi bi-tags"></i> Categories</h1>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+    <i class="bi bi-plus-lg"></i> Add Category
+  </button>
+</div>
 
-<!-- Tabs for Income/Expense -->
+<%# Flash errors %>
+<% if (errors && errors.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show">
+    <ul class="mb-0">
+      <% errors.forEach(e => { %><li><%= e.msg %></li><% }); %>
+    </ul>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
+
+<!-- Tabs -->
 <ul class="nav nav-tabs mb-4" role="tablist">
   <li class="nav-item" role="presentation">
     <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#expense-tab" type="button" role="tab">
-      <i class="bi bi-arrow-down-circle text-danger"></i> Expense
+      <i class="bi bi-arrow-down-circle text-danger"></i> Expense (<%= expense.length %>)
     </button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#income-tab" type="button" role="tab">
-      <i class="bi bi-arrow-up-circle text-success"></i> Income
+      <i class="bi bi-arrow-up-circle text-success"></i> Income (<%= income.length %>)
     </button>
   </li>
 </ul>
 
 <div class="tab-content">
-  <!-- Expense Categories Tab -->
+  <!-- EXPENSE TAB -->
   <div class="tab-pane fade show active" id="expense-tab" role="tabpanel">
     <div class="card">
-      <div class="card-body">
-        <p class="text-muted text-center py-3">Category management coming soon.</p>
+      <div class="card-body p-0">
+        <% if (expense.length === 0) { %>
+          <p class="text-muted text-center py-4">No expense categories yet.</p>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+              <tr>
+                <th>Name</th>
+                <th>Icon</th>
+                <th>Color</th>
+                <th>Type</th>
+                <th class="text-end">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% expense.forEach(cat => { %>
+                <tr>
+                  <td><%= cat.name %></td>
+                  <td><%= cat.icon || '—' %></td>
+                  <td>
+                    <% if (cat.color) { %>
+                      <span class="badge" style="background:<%= cat.color %>"><%= cat.color %></span>
+                    <% } else { %>—<% } %>
+                  </td>
+                  <td><span class="badge bg-danger">Expense</span></td>
+                  <td class="text-end">
+                    <% if (cat.user_id) { %>
+                      <button class="btn btn-sm btn-outline-secondary me-1"
+                              data-bs-toggle="modal" data-bs-target="#editModal"
+                              data-id="<%= cat.id %>" data-name="<%= cat.name %>"
+                              data-type="<%= cat.type %>" data-icon="<%= cat.icon || '' %>"
+                              data-color="<%= cat.color || '' %>">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <form action="/categories/<%= cat.id %>/delete" method="POST" class="d-inline"
+                            onsubmit="return confirm('Delete category \'<%= cat.name %>\'?')">
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                      </form>
+                    <% } else { %>
+                      <span class="badge bg-secondary">System</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
       </div>
     </div>
   </div>
 
-  <!-- Income Categories Tab -->
+  <!-- INCOME TAB -->
   <div class="tab-pane fade" id="income-tab" role="tabpanel">
     <div class="card">
-      <div class="card-body">
-        <p class="text-muted text-center py-3">Category management coming soon.</p>
+      <div class="card-body p-0">
+        <% if (income.length === 0) { %>
+          <p class="text-muted text-center py-4">No income categories yet.</p>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+              <tr>
+                <th>Name</th>
+                <th>Icon</th>
+                <th>Color</th>
+                <th>Type</th>
+                <th class="text-end">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% income.forEach(cat => { %>
+                <tr>
+                  <td><%= cat.name %></td>
+                  <td><%= cat.icon || '—' %></td>
+                  <td>
+                    <% if (cat.color) { %>
+                      <span class="badge" style="background:<%= cat.color %>"><%= cat.color %></span>
+                    <% } else { %>—<% } %>
+                  </td>
+                  <td><span class="badge bg-success">Income</span></td>
+                  <td class="text-end">
+                    <% if (cat.user_id) { %>
+                      <button class="btn btn-sm btn-outline-secondary me-1"
+                              data-bs-toggle="modal" data-bs-target="#editModal"
+                              data-id="<%= cat.id %>" data-name="<%= cat.name %>"
+                              data-type="<%= cat.type %>" data-icon="<%= cat.icon || '' %>"
+                              data-color="<%= cat.color || '' %>">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <form action="/categories/<%= cat.id %>/delete" method="POST" class="d-inline"
+                            onsubmit="return confirm('Delete category \'<%= cat.name %>\'?')">
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                      </form>
+                    <% } else { %>
+                      <span class="badge bg-secondary">System</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/categories" method="POST" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-plus-circle"></i> Add Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Name *</label>
+            <input type="text" name="name" class="form-control" required value="<%= oldInput.name || '' %>">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Type *</label>
+            <select name="type" class="form-select" required>
+              <option value="expense" <%= (oldInput.type === 'expense') ? 'selected' : '' %>>Expense</option>
+              <option value="income"  <%= (oldInput.type === 'income')  ? 'selected' : '' %>>Income</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Icon (emoji or text)</label>
+            <input type="text" name="icon" class="form-control" placeholder="🍔" value="<%= oldInput.icon || '' %>">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Color</label>
+            <input type="color" name="color" class="form-control form-control-color" value="<%= oldInput.color || '#6c757d' %>">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editForm" action="" method="POST" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-pencil"></i> Edit Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Name *</label>
+            <input type="text" name="name" id="editName" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Type *</label>
+            <select name="type" id="editType" class="form-select" required>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Icon</label>
+            <input type="text" name="icon" id="editIcon" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Color</label>
+            <input type="color" name="color" id="editColor" class="form-control form-control-color">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Populate edit modal from data attributes
+  document.getElementById('editModal').addEventListener('show.bs.modal', function(event) {
+    const btn = event.relatedTarget;
+    document.getElementById('editForm').action = `/categories/${btn.dataset.id}/edit`;
+    document.getElementById('editName').value  = btn.dataset.name;
+    document.getElementById('editType').value  = btn.dataset.type;
+    document.getElementById('editIcon').value  = btn.dataset.icon;
+    document.getElementById('editColor').value = btn.dataset.color || '#6c757d';
+  });
+</script>
