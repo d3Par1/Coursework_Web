@@ -1,36 +1,96 @@
+<%# views/transactions/index.ejs %>
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1><i class="bi bi-arrow-left-right"></i> Transactions</h1>
-  <button class="btn btn-primary" disabled>
-    <i class="bi bi-plus-lg"></i> Add Transaction
-  </button>
+  <div class="d-flex gap-2">
+    <a href="/api/export/csv?<%= new URLSearchParams(filters).toString() %>" class="btn btn-outline-secondary">
+      <i class="bi bi-download"></i> Export CSV
+    </a>
+    <a href="/transactions/new" class="btn btn-primary">
+      <i class="bi bi-plus-lg"></i> Add Transaction
+    </a>
+  </div>
 </div>
 
-<!-- Filter Area -->
+<!-- Filter Form -->
 <div class="card mb-4">
+  <div class="card-header">
+    <h6 class="mb-0"><i class="bi bi-funnel"></i> Filters</h6>
+  </div>
   <div class="card-body">
-    <h6 class="card-title"><i class="bi bi-funnel"></i> Filters</h6>
-    <div class="row g-3">
-      <div class="col-md-3">
-        <label class="form-label">Date From</label>
-        <input type="date" class="form-control" disabled>
+    <form method="GET" action="/transactions">
+      <div class="row g-3">
+        <div class="col-md-2">
+          <label class="form-label">Date From</label>
+          <input type="date" name="dateFrom" class="form-control" value="<%= filters.dateFrom || '' %>">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Date To</label>
+          <input type="date" name="dateTo" class="form-control" value="<%= filters.dateTo || '' %>">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Category</label>
+          <select name="category_id" class="form-select">
+            <option value="">All Categories</option>
+            <% categories.forEach(cat => { %>
+              <option value="<%= cat.id %>" <%= (filters.category_id == cat.id) ? 'selected' : '' %>>
+                <%= cat.name %> (<%= cat.type %>)
+              </option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Account</label>
+          <select name="account_id" class="form-select">
+            <option value="">All Accounts</option>
+            <% accounts.forEach(acc => { %>
+              <option value="<%= acc.id %>" <%= (filters.account_id == acc.id) ? 'selected' : '' %>>
+                <%= acc.name %>
+              </option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Type</label>
+          <select name="type" class="form-select">
+            <option value="">All Types</option>
+            <option value="income"  <%= (filters.type === 'income')  ? 'selected' : '' %>>Income</option>
+            <option value="expense" <%= (filters.type === 'expense') ? 'selected' : '' %>>Expense</option>
+          </select>
+        </div>
+        <div class="col-md-1 d-flex align-items-end gap-1">
+          <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
+          <a href="/transactions" class="btn btn-outline-secondary w-100" title="Reset"><i class="bi bi-x-lg"></i></a>
+        </div>
       </div>
-      <div class="col-md-3">
-        <label class="form-label">Date To</label>
-        <input type="date" class="form-control" disabled>
+    </form>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card border-success">
+      <div class="card-body text-center">
+        <div class="text-success fw-bold fs-5"><i class="bi bi-arrow-up-circle"></i> Income</div>
+        <div class="fs-4 fw-bold"><%= totalIncome.toFixed(2) %> UAH</div>
       </div>
-      <div class="col-md-3">
-        <label class="form-label">Category</label>
-        <select class="form-select" disabled>
-          <option>All Categories</option>
-        </select>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-danger">
+      <div class="card-body text-center">
+        <div class="text-danger fw-bold fs-5"><i class="bi bi-arrow-down-circle"></i> Expense</div>
+        <div class="fs-4 fw-bold"><%= totalExpense.toFixed(2) %> UAH</div>
       </div>
-      <div class="col-md-3">
-        <label class="form-label">Type</label>
-        <select class="form-select" disabled>
-          <option>All Types</option>
-          <option>Income</option>
-          <option>Expense</option>
-        </select>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-primary">
+      <div class="card-body text-center">
+        <div class="text-primary fw-bold fs-5"><i class="bi bi-bar-chart"></i> Net</div>
+        <div class="fs-4 fw-bold <%= (totalIncome - totalExpense) >= 0 ? 'text-success' : 'text-danger' %>">
+          <%= (totalIncome - totalExpense).toFixed(2) %> UAH
+        </div>
       </div>
     </div>
   </div>
@@ -38,27 +98,57 @@
 
 <!-- Transactions Table -->
 <div class="card">
-  <div class="card-body">
+  <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Account</th>
-            <th class="text-end">Amount</th>
-            <th class="text-end">Actions</th>
-          </tr>
+        <thead class="table-light">
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Account</th>
+          <th class="text-end">Amount</th>
+          <th class="text-end">Actions</th>
+        </tr>
         </thead>
         <tbody>
+        <% if (transactions.length === 0) { %>
           <tr>
             <td colspan="6" class="text-center text-muted py-4">
-              No transactions yet. Add your first transaction to get started.
+              No transactions found. <a href="/transactions/new">Add your first transaction</a>.
             </td>
           </tr>
+        <% } else { %>
+          <% transactions.forEach(tx => { %>
+            <tr>
+              <td><%= tx.date %></td>
+              <td><%= tx.description || '—' %></td>
+              <td>
+                  <span class="badge <%= tx.type === 'income' ? 'bg-success' : 'bg-danger' %>">
+                    <%= tx.category_icon ? tx.category_icon + ' ' : '' %><%= tx.category_name %>
+                  </span>
+              </td>
+              <td><%= tx.account_name %></td>
+              <td class="text-end fw-bold <%= tx.type === 'income' ? 'text-success' : 'text-danger' %>">
+                <%= tx.type === 'income' ? '+' : '−' %><%= tx.amount.toFixed(2) %> <%= tx.currency %>
+              </td>
+              <td class="text-end">
+                <a href="/transactions/<%= tx.id %>/edit" class="btn btn-sm btn-outline-secondary me-1">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <form action="/transactions/<%= tx.id %>/delete" method="POST" class="d-inline"
+                      onsubmit="return confirm('Delete this transaction?')">
+                  <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        <% } %>
         </tbody>
       </table>
     </div>
+  </div>
+  <div class="card-footer text-muted small">
+    Showing <%= transactions.length %> transaction<%= transactions.length !== 1 ? 's' : '' %>
   </div>
 </div>
