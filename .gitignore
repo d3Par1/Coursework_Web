@@ -2,4 +2,9 @@
 node_modules/
 *.env
 *.db
+*.db-shm
+*.db-wal
 .DS_Store
+*.docx
+docs/*.js
+docs/CW_*.md
