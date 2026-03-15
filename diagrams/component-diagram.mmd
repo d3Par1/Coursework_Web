@@ -1,69 +1,72 @@
-graph TB
-    subgraph Browser["Browser (Client)"]
-        BS5["Bootstrap 5<br/>Responsive UI"]
-        CJS["Chart.js<br/>Data Visualization"]
-        ClientJS["Client JavaScript<br/>Form Validation"]
+graph TD
+    subgraph Client["Browser (Client)"]
+        direction LR
+        BS5["Bootstrap 5\nResponsive UI"]
+        CJS["Chart.js\nVisualization"]
+        ClientJS["Client JS\nValidation"]
     end
 
     subgraph Server["Express 4 Server"]
-        subgraph Middleware["Middleware Layer"]
-            Session["express-session"]
-            Flash["connect-flash"]
-            Validator["express-validator"]
-            Morgan["morgan (Logger)"]
-            BodyParser["Body Parser<br/>(urlencoded + JSON)"]
+        direction LR
+        subgraph MW["Middleware"]
+            direction LR
+            Session["express-session"] --- Flash["connect-flash"]
+            Flash --- Valid["express-validator"]
+            Valid --- Morgan["morgan"]
+            Morgan --- BP["Body Parser"]
         end
 
-        subgraph Routes["Routes Layer"]
-            AuthR["Auth Routes<br/>/auth/*"]
-            DashR["Dashboard Routes<br/>/"]
-            AccR["Account Routes<br/>/accounts/*"]
-            TxnR["Transaction Routes<br/>/transactions/*"]
-            CatR["Category Routes<br/>/categories/*"]
-            BudR["Budget Routes<br/>/budgets/*"]
+        subgraph RT["Routes"]
+            direction LR
+            AuthR["/auth"] --- DashR["/"]
+            DashR --- AccR["/accounts"]
+            AccR --- TxnR["/transactions"]
+            TxnR --- CatR["/categories"]
+            CatR --- BudR["/budgets"]
         end
 
-        subgraph Models["Models Layer"]
-            UserM["User Model"]
-            AccM["Account Model"]
-            TxnM["Transaction Model"]
-            CatM["Category Model"]
-            BudM["Budget Model"]
+        subgraph VW["Views (EJS)"]
+            direction LR
+            Layout["layout.ejs"] --- Parts["Partials\nnavbar, flash, footer"]
+            Parts --- Pages["Page Templates"]
         end
 
-        subgraph Views["Views Layer (EJS)"]
-            Layout["layout.ejs<br/>Master Template"]
-            Partials["Partials<br/>(navbar, flash, footer)"]
-            Pages["Page Templates<br/>(dashboard, accounts,<br/>transactions, etc.)"]
+        subgraph MD["Models"]
+            direction LR
+            UserM["User"] --- AccM["Account"]
+            AccM --- TxnM["Transaction"]
+            TxnM --- CatM["Category"]
+            CatM --- BudM["Budget"]
         end
     end
 
-    subgraph DB["SQLite Database"]
-        Schema["5 Tables<br/>(users, accounts, categories,<br/>transactions, budgets)"]
+    subgraph DB["SQLite Database (better-sqlite3)"]
+        Tables["users | accounts | categories | transactions | budgets"]
     end
 
-    subgraph External["External Services (Phase 6)"]
-        ExRate["ExchangeRate API<br/>Currency Conversion"]
-        Gmail["Gmail SMTP<br/>Email Notifications"]
+    subgraph Ext["External Services (Phase 6)"]
+        direction LR
+        ExRate["ExchangeRate API"] --- Gmail["Gmail SMTP"]
     end
 
-    Browser -->|"HTTP Requests"| Middleware
-    Middleware --> Routes
-    Routes --> Models
-    Routes --> Views
-    Models -->|"SQL Queries<br/>(better-sqlite3)"| DB
-    Views --> Browser
-    Server -.->|"HTTP API"| ExRate
-    Server -.->|"SMTP"| Gmail
+    Client -->|"HTTP Requests"| MW
+    MW --> RT
+    RT --> VW
+    RT --> MD
+    VW -->|"HTML Response"| Client
+    MD -->|"SQL Queries"| DB
+    Server -.->|"HTTP / SMTP"| Ext
 
     classDef client fill:#4a90d9,stroke:#2c5282,color:#fff
     classDef server fill:#48bb78,stroke:#276749,color:#fff
-    classDef middleware fill:#ed8936,stroke:#c05621,color:#fff
+    classDef mw fill:#ed8936,stroke:#c05621,color:#fff
     classDef db fill:#9f7aea,stroke:#6b46c1,color:#fff
-    classDef external fill:#a0aec0,stroke:#718096,color:#fff
+    classDef ext fill:#a0aec0,stroke:#718096,color:#fff
 
     class BS5,CJS,ClientJS client
-    class AuthR,DashR,AccR,TxnR,CatR,BudR,UserM,AccM,TxnM,CatM,BudM,Layout,Partials,Pages server
-    class Session,Flash,Validator,Morgan,BodyParser middleware
-    class Schema db
-    class ExRate,Gmail external
+    class AuthR,DashR,AccR,TxnR,CatR,BudR server
+    class UserM,AccM,TxnM,CatM,BudM server
+    class Layout,Parts,Pages server
+    class Session,Flash,Valid,Morgan,BP mw
+    class Tables db
+    class ExRate,Gmail ext

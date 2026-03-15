@@ -61,9 +61,11 @@ function emptyPara(count = 1) {
 function titlePage() {
   const c = (text, opts = {}) =>
     para([txt(text, opts)], { alignment: AlignmentType.CENTER, after: opts.after !== undefined ? opts.after : 60 });
+  const r = (text, opts = {}) =>
+    para([txt(text, opts)], { alignment: AlignmentType.RIGHT, after: opts.after !== undefined ? opts.after : 40 });
 
   return [
-    ...emptyPara(2),
+    ...emptyPara(1),
     c("НАЦІОНАЛЬНИЙ ТЕХНІЧНИЙ УНІВЕРСИТЕТ УКРАЇНИ", { size: PT14, bold: true }),
     c("«КИЇВСЬКИЙ ПОЛІТЕХНІЧНИЙ ІНСТИТУТ імені ІГОРЯ СІКОРСЬКОГО»", { size: PT14, bold: true }),
     c(""),
@@ -72,15 +74,89 @@ function titlePage() {
     c("КУРСОВА РОБОТА", { size: PT20, bold: true, after: 120 }),
     c("з дисципліни: «Основи Веб-програмування»", { size: PT14 }),
     c("на тему: «Додаток для фінансового менеджменту»", { size: PT14, bold: true }),
-    ...emptyPara(3),
-    para([txt("Студента 2 курсу групи ТВ-43")], { alignment: AlignmentType.RIGHT, after: 40 }),
-    para([txt("напряму підготовки 121 Інженерія програмного забезпечення")], { alignment: AlignmentType.RIGHT, after: 40 }),
-    para([txt("Степаненко Назар Юрійович", { bold: true })], { alignment: AlignmentType.RIGHT, after: 40 }),
+    ...emptyPara(2),
+    r("Студента 2 курсу групи ТВ-43"),
+    r("напряму підготовки 121 Інженерія програмного забезпечення"),
+    r("Степаненко Назар Юрійович", { bold: true }),
     ...emptyPara(1),
-    para([txt("GitHub: "), txt("https://github.com/d3Par1/Coursework_Web")], { alignment: AlignmentType.RIGHT, after: 40 }),
-    para([txt("Керівник: д.т.н., доцент, Недашківський О. Л.")], { alignment: AlignmentType.RIGHT, after: 40 }),
-    ...emptyPara(6),
+    r("GitHub репозиторій: https://github.com/d3Par1/Coursework_Web"),
+    ...emptyPara(1),
+    r("Керівник: д.т.н., доцент, Недашківський О. Л."),
+    ...emptyPara(2),
+    para([txt("Національна оцінка ________________")], { alignment: AlignmentType.LEFT, after: 40 }),
+    para([txt("Кількість балів: __________  Оцінка: ECTS _____")], { alignment: AlignmentType.LEFT, after: 40 }),
+    ...emptyPara(1),
+    para([txt("Член комісії")], { alignment: AlignmentType.LEFT, after: 40 }),
+    para([txt("________________  ____________________________")], { alignment: AlignmentType.LEFT, after: 40 }),
+    para([txt("________________  ____________________________")], { alignment: AlignmentType.LEFT, after: 40 }),
+    ...emptyPara(2),
     c("Київ – 2025/2026", { size: PT14 }),
+    new Paragraph({ children: [new PageBreak()] }),
+  ];
+}
+
+// ── ЗАВДАННЯ ────────────────────────────────────────────────────────────────
+
+function zavdannyaPage() {
+  const c = (text, opts = {}) =>
+    para([txt(text, opts)], { alignment: AlignmentType.CENTER, after: opts.after !== undefined ? opts.after : 60 });
+
+  return [
+    c("НАЦІОНАЛЬНИЙ ТЕХНІЧНИЙ УНІВЕРСИТЕТ УКРАЇНИ", { size: PT12, bold: true }),
+    c("«КИЇВСЬКИЙ ПОЛІТЕХНІЧНИЙ ІНСТИТУТ імені ІГОРЯ СІКОРСЬКОГО»", { size: PT12, bold: true }),
+    ...emptyPara(1),
+    para([txt("Навчально-науковий інститут атомної та теплової енергетики", { size: PT12 })], { after: 40 }),
+    para([txt("Кафедра інженерії програмного забезпечення в енергетиці", { size: PT12 })], { after: 40 }),
+    para([txt("Напрям підготовки 121 Інженерія програмного забезпечення", { size: PT12 })], { after: 40 }),
+    ...emptyPara(1),
+    c("З А В Д А Н Н Я", { size: PT16, bold: true }),
+    c("НА КУРСОВУ РОБОТУ СТУДЕНТУ", { size: PT14, bold: true }),
+    c("Степаненку Назару Юрійовичу", { size: PT14 }),
+    ...emptyPara(1),
+    bodyPara("1.  Тема роботи – «Додаток для фінансового менеджменту»"),
+    bodyPara("Керівник курсової роботи – Недашківський О. Л., д.т.н., доцент"),
+    bodyPara("2.  Строк подання студентом роботи: «17» травня 2026 р."),
+    bodyPara("3.  Вихідні дані до проекту: мова програмування – JavaScript (Node.js), фреймворк – Express 4, база даних – SQLite (better-sqlite3), CSS-фреймворк – Bootstrap 5, візуалізація – Chart.js."),
+    bodyPara("4.  Зміст розрахунково-пояснювальної записки: розробити веб-додаток для персонального фінансового менеджменту з функціями обліку доходів та витрат, керування рахунками, категоризації транзакцій, бюджетування та візуалізації фінансового стану."),
+    bodyPara("5.  Дата видачі завдання: 15 лютого 2026 р."),
+    ...emptyPara(1),
+    c("КАЛЕНДАРНИЙ ПЛАН", { size: PT14, bold: true }),
+    ...emptyPara(1),
+    buildTable(
+      ["№", "Назва етапу", "Строк виконання"],
+      [
+        ["1", "Створення діаграм компонентів, взаємодії та класів", "2 тиждень"],
+        ["2", "Проектування структури меню", "3 тиждень"],
+        ["3", "Розміщення та стилізація елементів інтерфейсу", "4–5 тижні"],
+        ["4", "Проектування та реалізація моделей даних", "6 тиждень"],
+        ["5", "Розробка механізмів отримання та оновлення даних", "7–8 тижні"],
+        ["6", "Розробка бази даних", "9 тиждень"],
+        ["7", "Інтеграція сторонніх сервісів", "10–11 тижні"],
+        ["8", "Створення серверної архітектури", "12–13 тижні"],
+        ["9", "Реалізація обробки запитів та взаємодії з БД", "14–15 тижні"],
+        ["10", "Тестування та налаштування", "16 тиждень"],
+      ]
+    ),
+    ...emptyPara(2),
+    para([txt("Студент            _________                 Степаненко Н. Ю.")], { after: 40 }),
+    para([txt("Керівник курсової роботи           _________     Недашківський О. Л.")], { after: 40 }),
+    new Paragraph({ children: [new PageBreak()] }),
+  ];
+}
+
+// ── АНОТАЦІЯ ────────────────────────────────────────────────────────────────
+
+function anotatsiya() {
+  return [
+    heading1("АНОТАЦІЯ"),
+    bodyPara("У ході виконання курсової роботи розробляється веб-додаток для персонального фінансового менеджменту з використанням стеку технологій Node.js 20, Express 4, SQLite (better-sqlite3), Bootstrap 5, Chart.js. Додаток дозволяє користувачам реєструватись та авторизуватись, керувати фінансовими рахунками, категоризувати транзакції, встановлювати місячні бюджети та візуалізувати фінансовий стан через інтерактивні графіки."),
+    bodyPara("Проект розробляється командою з двох осіб з розподілом за функціональними модулями. Автор даного звіту відповідає за модулі авторизації, рахунків/гаманців, дашборду, графіків та інтеграції з API."),
+    bodyPara("У даному звіті описано роботу за пунктами 1–4: створення UML-діаграм, проектування меню, стилізація інтерфейсу та реалізація моделі даних."),
+    ...emptyPara(1),
+    heading1("ANNOTATION"),
+    bodyPara("This course work involves the development of a personal finance management web application using Node.js 20, Express 4, SQLite (better-sqlite3), Bootstrap 5, and Chart.js. The application allows users to register and log in, manage financial accounts, categorize transactions, set monthly budgets, and visualize their financial status through interactive charts."),
+    bodyPara("The project is developed by a team of two, with responsibilities divided by functional modules. The author of this report is responsible for authentication, accounts/wallets, dashboard, charts, and API integration."),
+    bodyPara("This report covers points 1–4: creation of UML diagrams, menu structure design, UI styling, and data model implementation."),
     new Paragraph({ children: [new PageBreak()] }),
   ];
 }
@@ -115,18 +191,23 @@ function buildTable(headerRow, dataRows) {
 
 // ── Image helpers ────────────────────────────────────────────────────────────
 
-function insertImage(filename, caption) {
+function insertImage(filename, caption, opts = {}) {
   const imgPath = path.join(DIAGRAMS, filename);
   const imgBuf = fs.readFileSync(imgPath);
-  const W = convertMillimetersToTwip(150); // 15 cm
-  const H = convertMillimetersToTwip(100); // proportional placeholder; docx stretches
+  // Read actual PNG dimensions to preserve aspect ratio
+  const pngW = imgBuf.readUInt32BE(16);
+  const pngH = imgBuf.readUInt32BE(20);
+  const maxW = opts.width || 570;
+  const ratio = pngH / pngW;
+  const w = maxW;
+  const h = Math.round(maxW * ratio);
   return [
     new Paragraph({ children: [] }),
     new Paragraph({
       children: [
         new ImageRun({
           data: imgBuf,
-          transformation: { width: 570, height: 380 }, // pixels for ~15cm at 96 dpi
+          transformation: { width: w, height: h },
           type: "png",
         }),
       ],
@@ -183,25 +264,30 @@ function bodyPara(text) {
 // ── ЗМІСТ ────────────────────────────────────────────────────────────────────
 
 function zmistSection() {
+  // Approximate page numbers for ЗМІСТ
   return [
     heading1("ЗМІСТ"),
-    bodyPara("1. Створення діаграм компонентів, взаємодії та класів"),
-    para("   1.1. Діаграма компонентів", { after: 40 }),
-    para("   1.2. Діаграма взаємодії", { after: 40 }),
-    para("   1.3. Діаграма класів", { after: 40 }),
-    bodyPara("2. Проектування структури меню"),
-    para("   2.1. Загальна структура навігації", { after: 40 }),
-    para("   2.2. Обґрунтування вибору структури меню", { after: 40 }),
-    bodyPara("3. Розміщення та стилізація елементів інтерфейсу"),
-    para("   3.1. Технології стилізації", { after: 40 }),
-    para("   3.2. Майстер-шаблон (layout)", { after: 40 }),
-    para("   3.3. Компоненти інтерфейсу", { after: 40 }),
-    para("   3.4. Адаптивний дизайн", { after: 40 }),
-    bodyPara("4. Модель даних та її реалізація"),
-    para("   4.1. Обрана СКБД", { after: 40 }),
-    para("   4.2. Схема бази даних", { after: 40 }),
-    para("   4.3. Зв'язки між таблицями", { after: 40 }),
-    para("   4.4. Ініціалізація бази даних", { after: 40 }),
+    para("АНОТАЦІЯ .................................................................................................................. 3", { after: 40 }),
+    para("ВСТУП ...................................................................................................................... 5", { after: 40 }),
+    para("РОЗДІЛ 1. Створення діаграм компонентів, взаємодії та класів ........................... 6", { after: 40 }),
+    para("   1.1. Діаграма компонентів .................................................................................. 6", { after: 40 }),
+    para("   1.2. Діаграма взаємодії ...................................................................................... 8", { after: 40 }),
+    para("   1.3. Діаграма класів .......................................................................................... 9", { after: 40 }),
+    para("РОЗДІЛ 2. Проектування структури меню .............................................................. 11", { after: 40 }),
+    para("   2.1. Загальна структура навігації ...................................................................... 11", { after: 40 }),
+    para("   2.2. Обґрунтування вибору структури меню .................................................... 12", { after: 40 }),
+    para("РОЗДІЛ 3. Розміщення та стилізація елементів інтерфейсу ................................. 13", { after: 40 }),
+    para("   3.1. Технології стилізації ................................................................................... 13", { after: 40 }),
+    para("   3.2. Майстер-шаблон (layout) ........................................................................... 13", { after: 40 }),
+    para("   3.3. Компоненти інтерфейсу ............................................................................. 14", { after: 40 }),
+    para("   3.4. Адаптивний дизайн .................................................................................... 17", { after: 40 }),
+    para("РОЗДІЛ 4. Модель даних та її реалізація ............................................................... 19", { after: 40 }),
+    para("   4.1. Обрана СКБД ............................................................................................. 19", { after: 40 }),
+    para("   4.2. Схема бази даних ...................................................................................... 19", { after: 40 }),
+    para("   4.3. Зв'язки між таблицями .............................................................................. 21", { after: 40 }),
+    para("   4.4. Ініціалізація бази даних ............................................................................. 22", { after: 40 }),
+    para("ВИСНОВКИ .............................................................................................................. 23", { after: 40 }),
+    para("СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ ...................................................................... 24", { after: 40 }),
     new Paragraph({ children: [new PageBreak()] }),
   ];
 }
@@ -526,6 +612,8 @@ async function main() {
         },
         children: [
           ...titlePage(),
+          ...zavdannyaPage(),
+          ...anotatsiya(),
           ...zmistSection(),
           ...vstupSection(),
           ...rozd1(),
