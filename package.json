@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/d3Par1/Coursework_Web#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.6.2",
     "connect-flash": "^0.1.1",
     "dotenv": "^17.3.1",
