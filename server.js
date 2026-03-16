@@ -40,13 +40,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
-app.use('/', require('./routes/dashboard'));
-app.use('/accounts', require('./routes/accounts'));
-app.use('/transactions', require('./routes/transactions'));
-app.use('/categories', require('./routes/categories'));
-app.use('/budgets', require('./routes/budgets'));
+// Auth middleware
+const { setCurrentUser, requireAuth } = require('./middleware/auth');
+app.use(setCurrentUser);
+
+// Routes (auth first, then protected routes)
 app.use('/auth', require('./routes/auth'));
+app.use('/', requireAuth, require('./routes/dashboard'));
+app.use('/accounts', requireAuth, require('./routes/accounts'));
+app.use('/transactions', requireAuth, require('./routes/transactions'));
+app.use('/categories', requireAuth, require('./routes/categories'));
+app.use('/budgets', requireAuth, require('./routes/budgets'));
 
 // 404 handler
 app.use((req, res) => {
