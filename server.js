@@ -51,6 +51,7 @@ app.use('/accounts', requireAuth, require('./routes/accounts'));
 app.use('/transactions', requireAuth, require('./routes/transactions'));
 app.use('/categories', requireAuth, require('./routes/categories'));
 app.use('/budgets', requireAuth, require('./routes/budgets'));
+app.use('/api/currency', requireAuth, require('./routes/currency'));
 
 // 404 handler
 app.use((req, res) => {
