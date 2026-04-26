@@ -6,7 +6,6 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const morgan = require('morgan');
 const path = require('path');
-git checkout -b feature/назва-фічі
 const app = express();
 const PORT = process.env.PORT || 3000;
 
