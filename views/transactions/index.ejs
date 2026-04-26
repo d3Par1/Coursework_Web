@@ -5,6 +5,9 @@
     <a href="/api/export/csv?<%= new URLSearchParams(filters).toString() %>" class="btn btn-outline-secondary">
       <i class="bi bi-download"></i> Export CSV
     </a>
+    <a href="/api/export/json?<%= new URLSearchParams(filters).toString() %>" class="btn btn-outline-secondary">
+      <i class="bi bi-filetype-json"></i> Export JSON
+    </a>
     <a href="/transactions/new" class="btn btn-primary">
       <i class="bi bi-plus-lg"></i> Add Transaction
     </a>
