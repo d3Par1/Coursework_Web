@@ -5,6 +5,7 @@ const { handleValidationErrors } = require('../middleware/validation');
 const Transaction = require('../models/Transaction');
 const Category    = require('../models/Category');
 const Account     = require('../models/Account');
+const { notifyIfOverBudget } = require('../services/emailNotification');
 const router = express.Router();
 
 // ── Auth guard ───────────────────────────────────────────────────────────────
@@ -111,6 +112,10 @@ router.post('/', transactionRules, (req, res) => {
     description,
     date,
   });
+
+  if (type === 'expense') {
+    notifyIfOverBudget(userId);
+  }
 
   req.flash('success', 'Transaction added successfully!');
   res.redirect('/transactions');
