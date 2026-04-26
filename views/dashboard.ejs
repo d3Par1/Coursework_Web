@@ -1,47 +1,111 @@
 <h1 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard</h1>
 
 <div class="row g-4 mb-4">
-  <!-- Total Balance Card -->
   <div class="col-md-4">
     <div class="card border-primary h-100">
       <div class="card-body text-center">
         <h5 class="card-title text-muted">Total Balance</h5>
-        <h2 class="card-text text-primary">0.00 UAH</h2>
-        <small class="text-muted">Across all accounts</small>
+        <h2 class="card-text text-primary"><%= total.toFixed(2) %> UAH</h2>
+        <small class="text-muted">Across <%= accounts.length %> account<%= accounts.length === 1 ? '' : 's' %></small>
       </div>
     </div>
   </div>
 
-  <!-- Income Summary Card -->
   <div class="col-md-4">
     <div class="card border-success h-100">
       <div class="card-body text-center">
         <h5 class="card-title text-muted">Income This Month</h5>
-        <h2 class="card-text text-success">+0.00 UAH</h2>
-        <small class="text-muted">March 2026</small>
+        <h2 class="card-text text-success">+<%= monthTotals.income.toFixed(2) %> UAH</h2>
+        <small class="text-muted"><%= month %></small>
       </div>
     </div>
   </div>
 
-  <!-- Expense Summary Card -->
   <div class="col-md-4">
     <div class="card border-danger h-100">
       <div class="card-body text-center">
         <h5 class="card-title text-muted">Expenses This Month</h5>
-        <h2 class="card-text text-danger">-0.00 UAH</h2>
-        <small class="text-muted">March 2026</small>
+        <h2 class="card-text text-danger">-<%= monthTotals.expense.toFixed(2) %> UAH</h2>
+        <small class="text-muted"><%= month %></small>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Recent Transactions -->
-<div class="card">
-  <div class="card-header d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">Recent Transactions</h5>
-    <a href="/transactions" class="btn btn-sm btn-outline-primary">View All</a>
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Transactions</h5>
+        <a href="/transactions" class="btn btn-sm btn-outline-primary">View All</a>
+      </div>
+      <div class="card-body p-0">
+        <% if (recent.length === 0) { %>
+          <p class="text-muted text-center py-4 mb-0">No transactions yet. Add your first transaction to get started.</p>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>Account</th>
+                  <th class="text-end">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% recent.forEach(t => { %>
+                  <tr>
+                    <td><%= t.date %></td>
+                    <td><%= t.category_name %></td>
+                    <td><%= t.account_name %></td>
+                    <td class="text-end">
+                      <% if (t.type === 'income') { %>
+                        <span class="text-success">+<%= t.amount.toFixed(2) %> <%= t.currency %></span>
+                      <% } else { %>
+                        <span class="text-danger">-<%= t.amount.toFixed(2) %> <%= t.currency %></span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
   </div>
-  <div class="card-body">
-    <p class="text-muted text-center py-3">No transactions yet. Add your first transaction to get started.</p>
+
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-currency-exchange"></i> Exchange Rates</h5>
+      </div>
+      <div class="card-body">
+        <% if (rates) { %>
+          <p class="small text-muted mb-2">1 UAH equals:</p>
+          <ul class="list-group list-group-flush">
+            <% rates.forEach(r => { %>
+              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <span><strong><%= r.code %></strong></span>
+                <span>
+                  <%= r.rate.toFixed(4) %>
+                  <small class="text-muted">(1 <%= r.code %> = <%= r.inverse.toFixed(2) %> UAH)</small>
+                </span>
+              </li>
+            <% }); %>
+          </ul>
+          <p class="small text-muted mt-2 mb-0">
+            <i class="bi bi-info-circle"></i>
+            Source: open.er-api.com (cached 1h)
+          </p>
+        <% } else { %>
+          <p class="text-muted small mb-0">
+            <i class="bi bi-exclamation-triangle"></i>
+            Unable to fetch rates<% if (ratesError) { %>: <%= ratesError %><% } %>
+          </p>
+        <% } %>
+      </div>
+    </div>
   </div>
 </div>

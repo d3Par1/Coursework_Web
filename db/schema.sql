@@ -54,3 +54,11 @@ CREATE TABLE IF NOT EXISTS budgets (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
     UNIQUE(user_id, category_id, month)
 );
+
+-- Indexes for common query patterns
+CREATE INDEX IF NOT EXISTS idx_accounts_user        ON accounts(user_id);
+CREATE INDEX IF NOT EXISTS idx_transactions_user_date ON transactions(user_id, date DESC);
+CREATE INDEX IF NOT EXISTS idx_transactions_account ON transactions(account_id);
+CREATE INDEX IF NOT EXISTS idx_transactions_category ON transactions(category_id);
+CREATE INDEX IF NOT EXISTS idx_budgets_user_month   ON budgets(user_id, month);
+CREATE INDEX IF NOT EXISTS idx_categories_user      ON categories(user_id);

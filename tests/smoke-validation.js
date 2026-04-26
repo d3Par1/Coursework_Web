@@ -1,14 +1,17 @@
 /**
- * Smoke tests for form validation (Plan 01-02)
+ * Smoke tests for form validation (Plan 01-02, updated for Phase 2 auth)
  * Tests client+server validation on auth forms.
  * Uses plain Node.js http module -- no test framework required.
  */
 const http = require('http');
 const app = require('../server');
+const db = require('../config/database');
 
 let passed = 0;
 let failed = 0;
 const total = 6;
+
+const TEST_EMAIL = 'validation-test@test.com';
 
 function report(name, ok) {
   if (ok) {
@@ -36,10 +39,13 @@ function makeRequest(options, body) {
 async function runTests(port) {
   console.log('Validation smoke tests\n');
 
+  // Clean up any leftover test user from previous runs
+  try { db.prepare('DELETE FROM users WHERE email = ?').run(TEST_EMAIL); } catch (e) { /* ignore */ }
+
   // Test a: POST /auth/register with empty body -> 422 with errors
   {
     const res = await makeRequest({
-      hostname: 'localhost', port, path: '/auth/register', method: 'POST',
+      hostname: '127.0.0.1', port, path: '/auth/register', method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': 0 }
     });
     report(
@@ -48,23 +54,23 @@ async function runTests(port) {
     );
   }
 
-  // Test b: POST /auth/register with valid data -> 302 redirect to /auth/login
+  // Test b: POST /auth/register with valid data -> 302 redirect to / (auto-login)
   {
-    const data = 'name=Test&email=test%40test.com&password=123456&confirmPassword=123456';
+    const data = `name=Test&email=${encodeURIComponent(TEST_EMAIL)}&password=123456&confirmPassword=123456`;
     const res = await makeRequest({
-      hostname: 'localhost', port, path: '/auth/register', method: 'POST',
+      hostname: '127.0.0.1', port, path: '/auth/register', method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(data) }
     }, data);
     report(
-      'POST /auth/register valid -> 302 to /auth/login',
-      res.status === 302 && res.headers.location === '/auth/login'
+      'POST /auth/register valid -> 302 to /',
+      res.status === 302 && res.headers.location === '/'
     );
   }
 
   // Test c: POST /auth/login with empty body -> 422 with errors
   {
     const res = await makeRequest({
-      hostname: 'localhost', port, path: '/auth/login', method: 'POST',
+      hostname: '127.0.0.1', port, path: '/auth/login', method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': 0 }
     });
     report(
@@ -74,10 +80,11 @@ async function runTests(port) {
   }
 
   // Test d: POST /auth/login with valid data -> 302 redirect to /
+  // Uses the user created in test b
   {
-    const data = 'email=test%40test.com&password=123456';
+    const data = `email=${encodeURIComponent(TEST_EMAIL)}&password=123456`;
     const res = await makeRequest({
-      hostname: 'localhost', port, path: '/auth/login', method: 'POST',
+      hostname: '127.0.0.1', port, path: '/auth/login', method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(data) }
     }, data);
     report(
@@ -86,9 +93,12 @@ async function runTests(port) {
     );
   }
 
+  // Clean up test user after login test
+  try { db.prepare('DELETE FROM users WHERE email = ?').run(TEST_EMAIL); } catch (e) { /* ignore */ }
+
   // Test e: GET /auth/register -> 200 with form elements
   {
-    const res = await makeRequest({ hostname: 'localhost', port, path: '/auth/register', method: 'GET' });
+    const res = await makeRequest({ hostname: '127.0.0.1', port, path: '/auth/register', method: 'GET' });
     report(
       'GET /auth/register -> 200 with needs-validation form',
       res.status === 200 && res.body.includes('Register') && res.body.includes('needs-validation')
@@ -97,7 +107,7 @@ async function runTests(port) {
 
   // Test f: GET /auth/login -> 200 with form elements
   {
-    const res = await makeRequest({ hostname: 'localhost', port, path: '/auth/login', method: 'GET' });
+    const res = await makeRequest({ hostname: '127.0.0.1', port, path: '/auth/login', method: 'GET' });
     report(
       'GET /auth/login -> 200 with needs-validation form',
       res.status === 200 && res.body.includes('Login') && res.body.includes('needs-validation')
@@ -105,7 +115,7 @@ async function runTests(port) {
   }
 }
 
-const server = app.listen(0, async () => {
+const server = app.listen(0, '127.0.0.1', async () => {
   const port = server.address().port;
   try {
     await runTests(port);

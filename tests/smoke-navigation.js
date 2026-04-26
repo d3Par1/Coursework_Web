@@ -1,14 +1,16 @@
 // tests/smoke-navigation.js
-// Smoke test: verify all main routes return HTTP 200
+// Smoke test: verify protected routes redirect to login when unauthenticated
 const http = require('http');
 const app = require('../server');
 
 const ROUTES = [
-  { path: '/', name: 'Dashboard', expect: 'Dashboard' },
-  { path: '/accounts', name: 'Accounts', expect: 'Accounts' },
-  { path: '/transactions', name: 'Transactions', expect: 'Transactions' },
-  { path: '/categories', name: 'Categories', expect: 'Categories' },
-  { path: '/budgets', name: 'Budgets', expect: 'Budgets' }
+  { path: '/', name: 'Dashboard', expect302: true },
+  { path: '/accounts', name: 'Accounts', expect302: true },
+  { path: '/transactions', name: 'Transactions', expect302: true },
+  { path: '/categories', name: 'Categories', expect302: true },
+  { path: '/budgets', name: 'Budgets', expect302: true },
+  { path: '/auth/login', name: 'Login', expect302: false, expect: 'Login' },
+  { path: '/auth/register', name: 'Register', expect302: false, expect: 'Register' }
 ];
 
 const PORT = 0; // Let OS assign a random available port
@@ -29,14 +31,18 @@ function testRoute(route) {
       let body = '';
       res.on('data', (chunk) => { body += chunk; });
       res.on('end', () => {
-        const statusOk = res.statusCode === 200;
-        const bodyOk = body.includes(route.expect);
+        let ok;
+        if (route.expect302) {
+          ok = res.statusCode === 302 && res.headers.location && res.headers.location.includes('/auth/login');
+        } else {
+          ok = res.statusCode === 200 && body.includes(route.expect);
+        }
 
-        if (statusOk && bodyOk) {
+        if (ok) {
           console.log(`  PASS  ${route.name} (${route.path}) - ${res.statusCode}`);
           passed++;
         } else {
-          console.log(`  FAIL  ${route.name} (${route.path}) - status: ${res.statusCode}, body contains "${route.expect}": ${bodyOk}`);
+          console.log(`  FAIL  ${route.name} (${route.path}) - status: ${res.statusCode}, expected ${route.expect302 ? '302' : '200'}`);
           failed++;
         }
         resolve();

@@ -1,31 +1,65 @@
+<%# views/accounts/index.ejs %>
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1><i class="bi bi-wallet2"></i> Accounts</h1>
-  <button class="btn btn-primary" disabled>
+  <a href="/accounts/new" class="btn btn-primary">
     <i class="bi bi-plus-lg"></i> Add Account
-  </button>
+  </a>
 </div>
 
-<div class="card">
-  <div class="card-body">
-    <div class="table-responsive">
-      <table class="table table-hover mb-0">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Currency</th>
-            <th class="text-end">Balance</th>
-            <th class="text-end">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="5" class="text-center text-muted py-4">
-              No accounts yet. Create your first account to start tracking finances.
-            </td>
-          </tr>
-        </tbody>
-      </table>
+<% if (accounts.length > 0) { %>
+  <div class="alert alert-info d-flex align-items-center mb-3">
+    <i class="bi bi-cash-stack me-2 fs-4"></i>
+    <div>
+      Total balance across all accounts:
+      <strong><%= total.toFixed(2) %></strong>
     </div>
+  </div>
+<% } %>
+
+<div class="card">
+  <div class="card-body p-0">
+    <% if (accounts.length === 0) { %>
+      <p class="text-muted text-center py-4 mb-0">
+        No accounts yet. Create your first account to start tracking finances.
+      </p>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Currency</th>
+              <th class="text-end">Balance</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% accounts.forEach(a => { %>
+              <tr>
+                <td><%= a.name %></td>
+                <td>
+                  <% const typeClass = a.type === 'cash' ? 'bg-success' : (a.type === 'card' ? 'bg-primary' : 'bg-info'); %>
+                  <span class="badge <%= typeClass %>"><%= a.type %></span>
+                </td>
+                <td><%= a.currency %></td>
+                <td class="text-end">
+                  <strong><%= a.balance.toFixed(2) %></strong> <%= a.currency %>
+                </td>
+                <td class="text-end">
+                  <a href="/accounts/<%= a.id %>/edit" class="btn btn-sm btn-outline-secondary me-1">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <form action="/accounts/<%= a.id %>/delete" method="POST" class="d-inline"
+                        onsubmit="return confirm('Delete account \'<%= a.name %>\'? This cannot be undone.')">
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
   </div>
 </div>
