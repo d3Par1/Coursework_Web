@@ -1,8 +1,7 @@
-// routes/api.js  (Artem's part — CSV export)
-// This file is created by Artem. Nazar's currency API endpoint goes in a separate section.
 const express = require('express');
 const router  = express.Router();
 const Transaction = require('../models/Transaction');
+const { notifyIfOverBudget } = require('../services/emailNotification');
 
 // ── Auth guard ───────────────────────────────────────────────────────────────
 function requireAuth(req, res, next) {
@@ -10,33 +9,33 @@ function requireAuth(req, res, next) {
     next();
 }
 
-// ── GET /api/export/csv ───────────────────────────────────────────────────────
-// Export transactions as CSV, supports same filters as /transactions
-router.get('/export/csv', requireAuth, (req, res) => {
-    const userId = req.session.userId;
-    const { dateFrom, dateTo, category_id, account_id, type } = req.query;
-
+// ── Helper: build filters from query params ───────────────────────────────────
+function buildFilters(query) {
+    const { dateFrom, dateTo, category_id, account_id, type } = query;
     const filters = {};
     if (dateFrom)    filters.dateFrom    = dateFrom;
     if (dateTo)      filters.dateTo      = dateTo;
     if (category_id) filters.category_id = category_id;
     if (account_id)  filters.account_id  = account_id;
     if (type)        filters.type        = type;
+    return filters;
+}
 
-    const rows = Transaction.findFiltered(userId, filters);
+// ── GET /api/export/csv ───────────────────────────────────────────────────────
+router.get('/export/csv', requireAuth, (req, res) => {
+    const userId = req.session.userId;
+    const rows = Transaction.findFiltered(userId, buildFilters(req.query));
 
-    // Build CSV
     const escape = (val) => {
         if (val == null) return '';
         const str = String(val);
-        // Wrap in quotes if contains comma, newline or double-quote
         if (str.includes(',') || str.includes('\n') || str.includes('"')) {
             return `"${str.replace(/"/g, '""')}"`;
         }
         return str;
     };
 
-    const header = ['Date', 'Type', 'Amount', 'Category', 'Account', 'Description'];
+    const header = ['Date', 'Type', 'Amount', 'Currency', 'Category', 'Account', 'Description'];
     const lines  = [header.join(',')];
 
     for (const r of rows) {
@@ -44,6 +43,7 @@ router.get('/export/csv', requireAuth, (req, res) => {
             escape(r.date),
             escape(r.type),
             escape(r.amount),
+            escape(r.currency),
             escape(r.category_name),
             escape(r.account_name),
             escape(r.description),
@@ -55,7 +55,44 @@ router.get('/export/csv', requireAuth, (req, res) => {
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.send('\uFEFF' + csv); // BOM for Excel UTF-8 compatibility
+    res.send('\uFEFF' + csv);
+});
+
+// ── GET /api/export/json ──────────────────────────────────────────────────────
+router.get('/export/json', requireAuth, (req, res) => {
+    const userId = req.session.userId;
+    const rows = Transaction.findFiltered(userId, buildFilters(req.query));
+
+    const payload = rows.map(r => ({
+        id:          r.id,
+        date:        r.date,
+        type:        r.type,
+        amount:      r.amount,
+        currency:    r.currency,
+        category:    r.category_name,
+        account:     r.account_name,
+        description: r.description || null,
+        created_at:  r.created_at,
+    }));
+
+    const filename = `transactions_${new Date().toISOString().slice(0, 10)}.json`;
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.json({
+        exported_at: new Date().toISOString(),
+        count: payload.length,
+        transactions: payload,
+    });
+});
+
+// ── POST /api/transactions/notify ─────────────────────────────────────────────
+// Manually trigger budget check + email notification
+router.post('/transactions/notify', requireAuth, async (req, res) => {
+    try {
+        notifyIfOverBudget(req.session.userId);
+        res.json({ ok: true, message: 'Budget check triggered.' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 module.exports = router;
