@@ -1,50 +1,73 @@
-<div class="row justify-content-center">
-  <div class="col-md-6 col-lg-5">
-    <div class="card shadow-sm">
-      <div class="card-body p-4">
-        <h2 class="card-title text-center mb-4">
-          <i class="bi bi-box-arrow-in-right"></i> Login
-        </h2>
-
-        <form action="/auth/login" method="POST" class="needs-validation" novalidate>
-          <!-- Email -->
-          <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              class="form-control <%= errors && errors.find(e => e.path === 'email') ? 'is-invalid' : '' %>"
-              value="<%= typeof oldInput !== 'undefined' && oldInput.email ? oldInput.email : '' %>"
-              required
-            >
-            <div class="invalid-feedback">
-              <%= errors && errors.find(e => e.path === 'email') ? errors.find(e => e.path === 'email').msg : 'Please enter a valid email address' %>
-            </div>
-          </div>
-
-          <!-- Password -->
-          <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              class="form-control <%= errors && errors.find(e => e.path === 'password') ? 'is-invalid' : '' %>"
-              required
-            >
-            <div class="invalid-feedback">
-              <%= errors && errors.find(e => e.path === 'password') ? errors.find(e => e.path === 'password').msg : 'Password is required' %>
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
-        </form>
-
-        <p class="text-center mb-0">
-          Don't have an account? <a href="/auth/register">Register</a>
-        </p>
-      </div>
+<div class="row g-0 my-n4" style="min-height:calc(100vh - 120px)">
+  <!-- LEFT hero -->
+  <div class="col-md-5 d-none d-md-flex flex-column justify-content-between p-5"
+       style="background:var(--brand);color:#fff;
+              background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+              background-size: 24px 24px;">
+    <div class="fw-bold fs-5 d-flex align-items-center gap-2">
+      <span style="width:42px;height:42px;border-radius:11px;background:#fff;color:var(--brand);
+                   display:inline-flex;align-items:center;justify-content:center;
+                   font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px">FM</span>
+      Finance Manager
     </div>
+    <div>
+      <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:60px;line-height:1.05;letter-spacing:-0.01em">
+        Your money,<br>
+        <em style="font-style:italic">finally</em> in one<br>
+        place.
+      </h1>
+      <p style="opacity:.85;max-width:38ch;font-size:15px;line-height:1.5;margin-top:1.5rem">
+        Track cash, card &amp; savings across multiple currencies. See where every hryvnia
+        goes — and where it should go next month.
+      </p>
+    </div>
+    <small style="opacity:.8;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;font-size:11px">
+      &#x1F512; Stored locally · bcrypt-hashed · session-only
+    </small>
+  </div>
+
+  <!-- RIGHT form -->
+  <div class="col-md-7 d-flex align-items-center justify-content-center p-5" style="background:var(--paper)">
+    <form action="/auth/login" method="POST" class="needs-validation w-100" novalidate style="max-width:420px">
+      <p class="text-uppercase fw-semibold mb-1" style="color:var(--brand);font-size:11px;letter-spacing:.14em;">Welcome back</p>
+      <h2 class="fw-bold mb-2" style="letter-spacing:-0.02em;font-size:34px">Sign in to your account</h2>
+      <p class="text-secondary mb-4">Enter your details below to access your finances.</p>
+
+      <div class="mb-3">
+        <label for="email" class="form-label small fw-semibold">Email address</label>
+        <input type="email" id="email" name="email" autocomplete="email"
+               placeholder="you@example.com"
+               class="form-control py-2 <%= errors && errors.find(e => e.path === 'email') ? 'is-invalid' : '' %>"
+               value="<%= typeof oldInput !== 'undefined' && oldInput.email ? oldInput.email : '' %>" required>
+        <div class="invalid-feedback">
+          <%= errors && errors.find(e => e.path === 'email') ? errors.find(e => e.path === 'email').msg : 'Please enter a valid email address' %>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label small fw-semibold">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password"
+               placeholder="••••••••"
+               class="form-control py-2 <%= errors && errors.find(e => e.path === 'password') ? 'is-invalid' : '' %>" required>
+        <div class="invalid-feedback">
+          <%= errors && errors.find(e => e.path === 'password') ? errors.find(e => e.path === 'password').msg : 'Password is required' %>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="rm">
+          <label class="form-check-label small" for="rm">Remember me</label>
+        </div>
+        <a href="#" class="small text-decoration-none" style="color:var(--brand);font-weight:500">Forgot password?</a>
+      </div>
+
+      <button class="btn btn-primary w-100 py-2 mb-3" type="submit" style="font-size:15px">Sign in</button>
+
+      <p class="text-center text-secondary small mb-0">
+        Don't have an account?
+        <a href="/auth/register" class="text-decoration-none" style="color:var(--brand);font-weight:600">Create one</a>
+      </p>
+    </form>
   </div>
 </div>

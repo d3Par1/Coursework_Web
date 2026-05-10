@@ -28,6 +28,7 @@ class Transaction {
   static findById(id) {
     return db.prepare(`
       SELECT t.*, c.name AS category_name, c.type AS category_type, c.icon AS category_icon,
+             c.color AS category_color,
              a.name AS account_name, a.currency
       FROM transactions t
       JOIN categories c ON t.category_id = c.id
@@ -42,6 +43,7 @@ class Transaction {
   static findByUserId(user_id) {
     return db.prepare(`
       SELECT t.*, c.name AS category_name, c.type AS category_type, c.icon AS category_icon,
+             c.color AS category_color,
              a.name AS account_name, a.currency
       FROM transactions t
       JOIN categories c ON t.category_id = c.id
@@ -58,6 +60,7 @@ class Transaction {
   static findFiltered(user_id, { dateFrom, dateTo, category_id, account_id, type } = {}) {
     let sql = `
       SELECT t.*, c.name AS category_name, c.type AS category_type, c.icon AS category_icon,
+             c.color AS category_color,
              a.name AS account_name, a.currency
       FROM transactions t
       JOIN categories c ON t.category_id = c.id

@@ -19,6 +19,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 app.set('layout', 'layout');
 
+// Money/date helpers available in all EJS templates
+const { money, signed, date } = require('./helpers/format');
+app.locals.money = money;
+app.locals.signed = signed;
+app.locals.dateLabel = date;
+
 // Middleware
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: false }));
@@ -43,6 +49,12 @@ app.use((req, res, next) => {
 // Auth middleware
 const { setCurrentUser, requireAuth } = require('./middleware/auth');
 app.use(setCurrentUser);
+
+// Expose current path to views (for active-nav highlighting)
+app.use((req, res, next) => {
+  res.locals.currentPath = req.path;
+  next();
+});
 
 // Routes (auth first, then protected routes)
 app.use('/auth', require('./routes/auth'));
