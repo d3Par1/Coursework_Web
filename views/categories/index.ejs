@@ -19,73 +19,76 @@
 <!-- Tabs -->
 <ul class="nav nav-tabs mb-4" role="tablist">
   <li class="nav-item" role="presentation">
-    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#expense-tab" type="button" role="tab">
-      <i class="bi bi-arrow-down-circle text-danger"></i> Expense (<%= expense.length %>)
+    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#exp-tab" type="button" role="tab">
+      Expense <span class="badge rounded-pill ms-1" style="background:var(--brand-soft);color:var(--brand-ink)"><%= expense.length %></span>
     </button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#income-tab" type="button" role="tab">
-      <i class="bi bi-arrow-up-circle text-success"></i> Income (<%= income.length %>)
+    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#inc-tab" type="button" role="tab">
+      Income <span class="badge rounded-pill ms-1" style="background:#f1ede3;color:var(--ink-soft)"><%= income.length %></span>
     </button>
   </li>
 </ul>
 
 <div class="tab-content">
-  <!-- EXPENSE TAB -->
-  <div class="tab-pane fade show active" id="expense-tab" role="tabpanel">
-    <div class="card">
-      <div class="card-body p-0">
-        <% if (expense.length === 0) { %>
-          <p class="text-muted text-center py-4">No expense categories yet.</p>
-        <% } else { %>
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead class="table-light">
-              <tr>
-                <th>Name</th>
-                <th>Icon</th>
-                <th>Color</th>
-                <th>Type</th>
-                <th class="text-end">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <% expense.forEach(cat => { %>
-                <tr>
-                  <td><%= cat.name %></td>
-                  <td><%= cat.icon || '—' %></td>
-                  <td>
-                    <% if (cat.color) { %>
-                      <span class="badge" style="background:<%= cat.color %>"><%= cat.color %></span>
-                    <% } else { %>—<% } %>
-                  </td>
-                  <td><span class="badge bg-danger">Expense</span></td>
-                  <td class="text-end">
-                    <% if (cat.user_id) { %>
-                      <button class="btn btn-sm btn-outline-secondary me-1"
-                              data-bs-toggle="modal" data-bs-target="#editModal"
-                              data-id="<%= cat.id %>" data-name="<%= cat.name %>"
-                              data-type="<%= cat.type %>" data-icon="<%= cat.icon || '' %>"
-                              data-color="<%= cat.color || '' %>">
-                        <i class="bi bi-pencil"></i>
-                      </button>
-                      <form action="/categories/<%= cat.id %>/delete" method="POST" class="d-inline"
-                            onsubmit="return confirm('Delete category \'<%= cat.name %>\'?')">
-                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                      </form>
-                    <% } else { %>
-                      <span class="badge bg-secondary">System</span>
-                    <% } %>
-                  </td>
-                </tr>
-              <% }); %>
-              </tbody>
-            </table>
+  <% [['exp', expense], ['inc', income]].forEach(([tab, list], i) => { %>
+    <div class="tab-pane fade <%= i===0 ? 'show active' : '' %>" id="<%= tab %>-tab" role="tabpanel">
+      <% if (list.length === 0) { %>
+        <div class="text-center py-5 px-3">
+          <div class="mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
+               style="width:64px;height:64px;border-radius:16px;background:var(--brand-soft);color:var(--brand)">
+            <i class="bi bi-tags" style="font-size:28px"></i>
           </div>
-        <% } %>
-      </div>
+          <h5 class="fw-semibold mb-1">No categories yet</h5>
+          <p class="text-secondary mb-3">Add your first category to organize transactions.</p>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">+ New category</button>
+        </div>
+      <% } else { %>
+        <div class="row g-3">
+          <% list.forEach(cat => { %>
+            <div class="col-md-3 col-sm-6">
+              <div class="card h-100 p-3 position-relative">
+                <div style="width:42px;height:42px;border-radius:11px;background:<%= cat.color || '#888' %>;
+                        color:#fff;display:inline-flex;align-items:center;justify-content:center;
+                        font-size:18px;font-weight:600;margin-bottom:12px">
+                  <%= cat.icon || cat.name.charAt(0) %>
+                </div>
+                <div class="fw-semibold"><%= cat.name %></div>
+                <div class="small mt-auto pt-2 border-top mt-3"
+                     style="color:var(--muted);border-color:var(--rule)!important">
+                  <%= cat.monthly_total ? money(cat.monthly_total) : '—' %>
+                </div>
+                <% if (!cat.user_id) { %>
+                  <span class="position-absolute top-0 end-0 m-2 badge rounded-pill"
+                        style="background:#f1ede3;color:var(--muted);font-weight:400">system</span>
+                <% } else { %>
+                  <div class="position-absolute top-0 end-0 m-2 d-flex gap-1">
+                    <button class="btn btn-sm btn-outline-secondary py-0 px-1"
+                            data-bs-toggle="modal" data-bs-target="#editModal"
+                            data-id="<%= cat.id %>" data-name="<%= cat.name %>"
+                            data-type="<%= cat.type %>" data-icon="<%= cat.icon||'' %>"
+                            data-color="<%= cat.color||'' %>">✎</button>
+                    <form action="/categories/<%= cat.id %>/delete" method="POST" class="d-inline"
+                          onsubmit="return confirm('Delete category \'<%= cat.name %>\'?')">
+                      <button class="btn btn-sm btn-outline-danger py-0 px-1">×</button>
+                    </form>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          <% }); %>
+          <div class="col-md-3 col-sm-6">
+            <button class="card h-100 p-3 d-flex align-items-center justify-content-center text-secondary w-100"
+                    style="border:1.5px dashed var(--rule-strong);background:transparent;min-height:128px"
+                    data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+              <span>+ Add category</span>
+            </button>
+          </div>
+        </div>
+      <% } %>
     </div>
-  </div>
+  <% }); %>
+</div>
 
   <!-- INCOME TAB -->
   <div class="tab-pane fade" id="income-tab" role="tabpanel">
