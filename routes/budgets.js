@@ -24,6 +24,11 @@ const budgetRules = [
       .isFloat({ gt: 0 }).withMessage('Limit must be a positive number'),
 ];
 
+const editBudgetRules = [
+  body('limit_amount')
+      .isFloat({ gt: 0 }).withMessage('Limit must be a positive number'),
+];
+
 // ── GET /budgets ──────────────────────────────────────────────────────────────
 router.get('/', (req, res) => {
   const userId = req.session.userId;
@@ -65,6 +70,28 @@ router.post('/', budgetRules, (req, res) => {
 
   req.flash('success', 'Budget saved successfully!');
   res.redirect(`/budgets?month=${month}`);
+});
+
+// ── POST /budgets/:id/edit ────────────────────────────────────────────────────
+router.post('/:id/edit', editBudgetRules, (req, res) => {
+  const userId = req.session.userId;
+  const currentMonth = req.body.month || new Date().toISOString().slice(0, 7);
+
+  const hasErrors = handleValidationErrors(req, res, 'budgets/index', {
+    title: 'Budgets',
+    budgets:    Budget.findByMonth(userId, currentMonth),
+    categories: Category.findByType(userId, 'expense'),
+    currentMonth,
+  });
+  if (hasErrors) return;
+
+  const ok = Budget.update(req.params.id, userId, {
+    limit_amount: parseFloat(req.body.limit_amount),
+  });
+
+  if (!ok) req.flash('error', 'Budget not found.');
+  else     req.flash('success', 'Budget limit updated!');
+  res.redirect(`/budgets?month=${currentMonth}`);
 });
 
 // ── POST /budgets/:id/delete ──────────────────────────────────────────────────
