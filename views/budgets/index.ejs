@@ -16,33 +16,63 @@
   </div>
 <% } %>
 
-<!-- Month selector -->
-<div class="card mb-4">
-  <div class="card-body">
-    <form method="GET" action="/budgets" class="d-flex align-items-center gap-3">
-      <label class="form-label mb-0 fw-bold">Month:</label>
-      <input type="month" name="month" class="form-control" style="width:180px"
-             value="<%= currentMonth %>" onchange="this.form.submit()">
-    </form>
-  </div>
+<!-- Month selector — stepper -->
+<div class="d-flex align-items-center gap-3 mb-4 p-3 rounded"
+     style="background:var(--paper);border:1px solid var(--rule);width:fit-content">
+  <%
+  const [yr, mo] = currentMonth.split('-').map(Number);
+  const prev = new Date(yr, mo - 2, 1);
+  const next = new Date(yr, mo, 1);
+  const prevStr = prev.toISOString().slice(0,7);
+  const nextStr = next.toISOString().slice(0,7);
+  const monthName = new Date(yr, mo - 1, 1).toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+  %>
+  <a href="/budgets?month=<%= prevStr %>" class="btn btn-sm btn-outline-secondary">‹</a>
+  <span class="fw-semibold" style="min-width:140px;text-align:center"><%= monthName %></span>
+  <a href="/budgets?month=<%= nextStr %>" class="btn btn-sm btn-outline-secondary">›</a>
 </div>
+
+<!-- Summary stats -->
+<% if (budgets.length > 0) { %>
+  <%
+    const totalBudget = budgets.reduce((s,b) => s + b.limit_amount, 0);
+    const totalSpent  = budgets.reduce((s,b) => s + b.spent, 0);
+  %>
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card p-3">
+        <div class="small" style="color:var(--muted)">Total budgeted</div>
+        <div class="h4 mb-0 num"><%= money(totalBudget) %></div>
+      </div></div>
+    <div class="col-md-4"><div class="card p-3">
+        <div class="small" style="color:var(--muted)">Spent this month</div>
+        <div class="h4 mb-0 num" style="color:var(--bad)"><%= money(totalSpent) %></div>
+      </div></div>
+    <div class="col-md-4"><div class="card p-3">
+        <div class="small" style="color:var(--muted)">Remaining</div>
+        <div class="h4 mb-0 num" style="color:var(--good)"><%= money(totalBudget - totalSpent) %></div>
+      </div></div>
+  </div>
+<% } %>
+
 
 <!-- Budget list -->
 <% if (budgets.length === 0) { %>
-  <div class="card">
-    <div class="card-body text-center py-5">
-      <i class="bi bi-piggy-bank fs-1 text-muted"></i>
-      <p class="text-muted mt-3">No budgets set for <strong><%= currentMonth %></strong>.</p>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
-        <i class="bi bi-plus-lg"></i> Set your first budget
-      </button>
+  <div class="text-center py-5 px-3">
+    <div class="mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
+         style="width:64px;height:64px;border-radius:16px;background:var(--brand-soft);color:var(--brand)">
+      <i class="bi bi-piggy-bank" style="font-size:28px"></i>
     </div>
+    <h5 class="fw-semibold mb-1">No budgets for this month</h5>
+    <p class="text-secondary mb-3" style="max-width:34ch;margin-left:auto;margin-right:auto">
+      Set monthly limits per category to keep your spending in check.
+    </p>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">Set your first budget</button>
   </div>
 <% } else { %>
   <div class="row g-3">
     <% budgets.forEach(b => { %>
       <div class="col-md-6">
-        <div class="card shadow-sm h-100">
+        <div class="card h-100 <%= b.over_limit ? 'over-budget' : '' %>">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-start mb-2">
               <div>
@@ -50,13 +80,12 @@
                   <% if (b.icon) { %><%= b.icon %> <% } %>
                   <strong><%= b.category_name %></strong>
                 </span>
-                <div class="text-muted small"><%= b.month %></div>
+                <div class="small" style="color:var(--muted)"><%= b.month %></div>
               </div>
               <div class="d-flex gap-1 align-items-center">
                 <% if (b.over_limit) { %>
-                  <span class="badge bg-danger"><i class="bi bi-exclamation-triangle"></i> Over budget!</span>
+                  <span class="badge rounded-pill" style="background:var(--bad-soft);color:var(--bad);font-weight:500">⚠ Over</span>
                 <% } %>
-                <!-- Edit button -->
                 <button class="btn btn-sm btn-outline-secondary"
                         data-bs-toggle="modal" data-bs-target="#editBudgetModal"
                         data-id="<%= b.id %>"
@@ -75,31 +104,24 @@
             </div>
 
             <!-- Progress bar -->
-            <div class="progress mb-2" style="height:22px;">
-              <div class="progress-bar <%= b.over_limit ? 'bg-danger' : (b.percent > 75 ? 'bg-warning' : 'bg-success') %>"
-                   role="progressbar"
-                   style="width: <%= b.percent %>%"
-                   aria-valuenow="<%= b.percent %>"
-                   aria-valuemin="0" aria-valuemax="100">
-                <%= b.percent %>%
+            <div class="progress mb-2" role="progressbar">
+              <div class="progress-bar"
+                   style="width: <%= Math.min(b.percent, 100) %>%;
+                           background: <%= b.over_limit ? 'var(--bad)' :
+                           b.percent > 75 ? 'linear-gradient(90deg, var(--brand) 0%, var(--warn) 100%)' :
+                                   'var(--brand)' %>">
               </div>
             </div>
 
             <!-- Amounts -->
-            <div class="d-flex justify-content-between small">
-              <span class="text-muted">
-                Spent: <strong class="<%= b.over_limit ? 'text-danger' : '' %>">
-                  <%= b.spent.toFixed(2) %> UAH
-                </strong>
-              </span>
-              <span class="text-muted">
-                Limit: <strong><%= b.limit_amount.toFixed(2) %> UAH</strong>
-              </span>
-              <span class="text-muted">
-                Left: <strong class="<%= (b.limit_amount - b.spent) < 0 ? 'text-danger' : 'text-success' %>">
-                  <%= (b.limit_amount - b.spent).toFixed(2) %> UAH
-                </strong>
-              </span>
+            <div class="d-flex justify-content-between small" style="color:var(--muted)">
+              <span>Spent: <strong style="color:<%= b.over_limit ? 'var(--bad)' : 'var(--ink)' %>">
+                <%= money(b.spent) %>
+              </strong></span>
+              <span>Limit: <strong style="color:var(--ink)"><%= money(b.limit_amount) %></strong></span>
+              <span>Left: <strong style="color:<%= (b.limit_amount - b.spent) < 0 ? 'var(--bad)' : 'var(--good)' %>">
+                <%= money(b.limit_amount - b.spent) %>
+              </strong></span>
             </div>
           </div>
         </div>
@@ -192,4 +214,3 @@
     document.getElementById('editBudgetMonth').value  = btn.dataset.month;
     document.getElementById('editBudgetCatName').textContent = btn.dataset.name;
   });
-</script>
