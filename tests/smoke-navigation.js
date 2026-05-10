@@ -9,8 +9,8 @@ const ROUTES = [
   { path: '/transactions', name: 'Transactions', expect302: true },
   { path: '/categories', name: 'Categories', expect302: true },
   { path: '/budgets', name: 'Budgets', expect302: true },
-  { path: '/auth/login', name: 'Login', expect302: false, expect: 'Login' },
-  { path: '/auth/register', name: 'Register', expect302: false, expect: 'Register' }
+  { path: '/auth/login', name: 'Login', expect302: false, expect: 'Sign in' },
+  { path: '/auth/register', name: 'Register', expect302: false, expect: 'Create' }
 ];
 
 const PORT = 0; // Let OS assign a random available port

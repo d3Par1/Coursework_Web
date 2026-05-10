@@ -101,7 +101,7 @@ async function runTests(port) {
     const res = await makeRequest({ hostname: '127.0.0.1', port, path: '/auth/register', method: 'GET' });
     report(
       'GET /auth/register -> 200 with needs-validation form',
-      res.status === 200 && res.body.includes('Register') && res.body.includes('needs-validation')
+      res.status === 200 && res.body.includes('Create') && res.body.includes('needs-validation')
     );
   }
 
@@ -110,7 +110,7 @@ async function runTests(port) {
     const res = await makeRequest({ hostname: '127.0.0.1', port, path: '/auth/login', method: 'GET' });
     report(
       'GET /auth/login -> 200 with needs-validation form',
-      res.status === 200 && res.body.includes('Login') && res.body.includes('needs-validation')
+      res.status === 200 && res.body.includes('Sign in') && res.body.includes('needs-validation')
     );
   }
 }

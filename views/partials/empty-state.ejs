@@ -1,0 +1,14 @@
+<%# Reusable empty-state. Locals: icon, title, message, ctaLabel, ctaUrl %>
+<div class="text-center py-5 px-3">
+  <div class="mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
+       style="width:64px;height:64px;border-radius:16px;background:var(--brand-soft);color:var(--brand)">
+    <i class="bi <%= typeof icon !== 'undefined' && icon ? icon : 'bi-inbox' %>" style="font-size:28px"></i>
+  </div>
+  <h5 class="fw-semibold mb-1"><%= title %></h5>
+  <p class="text-secondary mb-3" style="max-width:34ch;margin-left:auto;margin-right:auto">
+    <%= message %>
+  </p>
+  <% if (typeof ctaLabel !== 'undefined' && ctaLabel) { %>
+    <a href="<%= ctaUrl %>" class="btn btn-primary"><%= ctaLabel %></a>
+  <% } %>
+</div>

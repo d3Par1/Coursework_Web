@@ -32,27 +32,30 @@
         return;
       }
 
+      const moneyFmt = new Intl.NumberFormat('uk-UA', { style: 'currency', currency: 'UAH', minimumFractionDigits: 0 });
       new Chart(canvas, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
           labels: json.labels,
           datasets: [{
             data: json.data,
             backgroundColor: json.colors,
-            borderWidth: 1,
+            borderWidth: 2,
+            borderColor: '#fbfaf6',
           }],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          cutout: '60%',
           plugins: {
-            legend: { position: 'right', labels: { boxWidth: 14 } },
+            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12, font: { size: 12 } } },
             tooltip: {
               callbacks: {
                 label: (ctx) => {
                   const sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
                   const pct = sum ? ((ctx.parsed / sum) * 100).toFixed(1) : 0;
-                  return `${ctx.label}: ${ctx.parsed.toFixed(2)} UAH (${pct}%)`;
+                  return `${ctx.label}: ${moneyFmt.format(ctx.parsed)} (${pct}%)`;
                 },
               },
             },
@@ -79,6 +82,7 @@
         return;
       }
 
+      const moneyFmt = new Intl.NumberFormat('uk-UA', { style: 'currency', currency: 'UAH', minimumFractionDigits: 0 });
       new Chart(canvas, {
         type: 'bar',
         data: {
@@ -87,16 +91,18 @@
             {
               label: 'Income',
               data: json.income,
-              backgroundColor: 'rgba(25, 135, 84, 0.7)',
-              borderColor: 'rgba(25, 135, 84, 1)',
+              backgroundColor: 'rgba(75, 137, 95, 0.75)',
+              borderColor: 'rgba(58, 110, 75, 1)',
               borderWidth: 1,
+              borderRadius: 4,
             },
             {
               label: 'Expense',
               data: json.expense,
-              backgroundColor: 'rgba(220, 53, 69, 0.7)',
-              borderColor: 'rgba(220, 53, 69, 1)',
+              backgroundColor: 'rgba(193, 79, 53, 0.75)',
+              borderColor: 'rgba(157, 60, 38, 1)',
               borderWidth: 1,
+              borderRadius: 4,
             },
           ],
         },
@@ -104,19 +110,25 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'top' },
+            legend: { position: 'top', labels: { boxWidth: 12, padding: 12, font: { size: 12 } } },
             tooltip: {
               callbacks: {
-                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} UAH`,
+                label: (ctx) => `${ctx.dataset.label}: ${moneyFmt.format(ctx.parsed.y)}`,
               },
             },
           },
           scales: {
             y: {
               beginAtZero: true,
+              grid: { color: 'rgba(230, 224, 210, 0.6)' },
               ticks: {
-                callback: (val) => `${val} UAH`,
+                callback: (val) => val >= 1000 ? (val / 1000) + 'k ₴' : val + ' ₴',
+                font: { size: 11 },
               },
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 11 } },
             },
           },
         },

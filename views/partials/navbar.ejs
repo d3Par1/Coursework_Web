@@ -1,7 +1,10 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg border-bottom" style="background:var(--paper)">
   <div class="container">
-    <a class="navbar-brand" href="/">
-      <i class="bi bi-wallet2"></i> Finance Manager
+    <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="/">
+      <span style="width:28px;height:28px;border-radius:7px;background:var(--brand);
+                   color:#fff;display:inline-flex;align-items:center;justify-content:center;
+                   font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">FM</span>
+      <span style="color:var(--ink)">Finance Manager</span>
     </a>
     <button class="navbar-toggler" type="button"
             data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -11,49 +14,45 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <% if (locals.currentUser) { %>
       <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/">
-            <i class="bi bi-speedometer2"></i> Dashboard
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/accounts">
-            <i class="bi bi-wallet2"></i> Accounts
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/transactions">
-            <i class="bi bi-arrow-left-right"></i> Transactions
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/categories">
-            <i class="bi bi-tags"></i> Categories
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/budgets">
-            <i class="bi bi-piggy-bank"></i> Budgets
-          </a>
-        </li>
+        <% const items = [
+          ['/',             'Dashboard'],
+          ['/accounts',     'Accounts'],
+          ['/transactions', 'Transactions'],
+          ['/categories',   'Categories'],
+          ['/budgets',      'Budgets'],
+        ];
+        const here = locals.currentPath || ''; %>
+        <% items.forEach(([href, label]) => {
+             const active = here === href; %>
+          <li class="nav-item">
+            <a class="nav-link <%= active ? 'active fw-semibold' : '' %>"
+               href="<%= href %>"
+               style="color:<%= active ? 'var(--brand)' : 'var(--ink-soft)' %>"><%= label %></a>
+          </li>
+        <% }); %>
       </ul>
       <% } %>
-      <ul class="navbar-nav ms-auto">
+      <ul class="navbar-nav ms-auto align-items-center">
         <% if (locals.currentUser) { %>
-          <li class="nav-item">
-            <span class="nav-link"><i class="bi bi-person-circle"></i> <%= currentUser.name %></span>
+          <li class="nav-item d-flex align-items-center gap-2 me-2">
+            <span style="width:28px;height:28px;border-radius:50%;background:var(--brand-soft);
+                         color:var(--brand-ink);display:inline-flex;align-items:center;
+                         justify-content:center;font-size:11px;font-weight:600;">
+              <%= currentUser.name.slice(0,2).toUpperCase() %>
+            </span>
+            <span class="small" style="color:var(--ink-soft)"><%= currentUser.name %></span>
           </li>
           <li class="nav-item">
             <form action="/auth/logout" method="POST" class="d-inline">
-              <button type="submit" class="btn btn-outline-light btn-sm ms-2">Logout</button>
+              <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
             </form>
           </li>
         <% } else { %>
           <li class="nav-item">
-            <a class="nav-link" href="/auth/login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+            <a class="btn btn-sm btn-outline-secondary me-2" href="/auth/login">Sign in</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/auth/register"><i class="bi bi-person-plus"></i> Register</a>
+            <a class="btn btn-sm btn-primary" href="/auth/register">Create account</a>
           </li>
         <% } %>
       </ul>
