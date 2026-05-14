@@ -27,6 +27,20 @@ module.exports = {
     if (d >= ytd) return 'Yesterday';
     return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
   },
+  /**
+   * Compute a two-letter avatar label from a person's name. Strips
+   * academic-group-code tokens (e.g. "ТВ-43", "TB-43") that some users
+   * include in their name field — "ТВ-43 Артем" → "АР", not "ТА".
+   * Single-token fallback: first two letters. No valid tokens: "?".
+   */
+  initials: (name) => {
+    if (!name || typeof name !== 'string') return '?';
+    const groupCode = /^[A-Za-zА-Яа-яҐґЄєІіЇї]{1,4}-?\d+$/;
+    const words = name.split(/\s+/).filter((w) => w && !groupCode.test(w));
+    if (words.length === 0) return '?';
+    if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+    return words.map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+  },
   /** "Today · 14:02" / "Yesterday · 09:18" / "Sat 4 May · 03:14" */
   dateTime: (iso) => {
     if (!iso) return '';

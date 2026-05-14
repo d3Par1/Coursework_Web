@@ -15,7 +15,7 @@
             <div style="width:64px;height:64px;border-radius:50%;background:var(--brand-soft);
                         color:var(--brand-ink);display:inline-flex;align-items:center;justify-content:center;
                         font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;">
-              <%= user.name.split(/\s+/).filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0,2) %>
+              <%= initials(user.name) %>
             </div>
           <% } %>
           <div>

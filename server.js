@@ -52,11 +52,12 @@ app.use(expressLayouts);
 app.set('layout', 'layout');
 
 // Money/date helpers available in all EJS templates
-const { money, signed, date, dateTime } = require('./helpers/format');
+const { money, signed, date, dateTime, initials } = require('./helpers/format');
 app.locals.money = money;
 app.locals.signed = signed;
 app.locals.dateLabel = date;
 app.locals.dateTime = dateTime;
+app.locals.initials = initials;
 
 // OAuth provider availability — exposed to views so buttons hide when env
 // vars are missing. The actual strategy registration happens in services/oauth.js.
