@@ -33,6 +33,7 @@ body {
   color: var(--ink);
   font-family: "Manrope", system-ui, -apple-system, sans-serif;
   font-feature-settings: "ss01", "cv11";
+  overflow-x: hidden;
 }
 main { flex: 1; }
 
@@ -139,7 +140,15 @@ footer.bg-light {
   --rule-strong:       #3a3e48;
 }
 
-:root[data-theme="dark"] .card { background: var(--surface); border-color: var(--rule); }
+:root[data-theme="dark"] .card { background: var(--surface); border-color: var(--rule); color: var(--ink); }
+:root[data-theme="dark"] .form-label { color: var(--ink); }
+:root[data-theme="dark"] .text-secondary { color: var(--ink-soft) !important; }
+:root[data-theme="dark"] .badge.bg-success-subtle,
+:root[data-theme="dark"] .bg-success-subtle {
+  background-color: oklch(0.30 0.06 150) !important;
+  color: var(--good) !important;
+}
+:root[data-theme="dark"] .text-success-emphasis { color: var(--good) !important; }
 :root[data-theme="dark"] .navbar { background: var(--paper) !important; border-color: var(--rule) !important; }
 :root[data-theme="dark"] .form-control,
 :root[data-theme="dark"] .form-select {
@@ -265,6 +274,7 @@ footer.bg-light {
 .auth-event-icon.brand { background: var(--brand-soft); color: var(--brand); }
 .auth-event-icon.muted { background: var(--rule);      color: var(--ink-soft); }
 .auth-event-body { flex: 1; min-width: 0; }
+.auth-event-body .auth-event-meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .auth-event-headline { font-weight: 600; color: var(--ink); margin-bottom: 2px; }
 .auth-event-meta { color: var(--muted); font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: .03em; }
 .auth-event-tag {

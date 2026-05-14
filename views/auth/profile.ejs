@@ -10,7 +10,6 @@
         <div class="d-flex align-items-center gap-3 mb-3">
           <% if (user.avatar_url) { %>
             <img src="<%= user.avatar_url %>" alt="" width="64" height="64" loading="lazy"
-                 referrerpolicy="no-referrer"
                  style="border-radius:50%;border:2px solid var(--rule);object-fit:cover;">
           <% } else { %>
             <div style="width:64px;height:64px;border-radius:50%;background:var(--brand-soft);
@@ -58,34 +57,9 @@
       </div>
     </div>
 
-    <div class="card border-0 shadow-sm mt-3" style="background:var(--paper)">
-      <div class="card-body p-4">
-        <p class="text-uppercase fw-semibold mb-3" style="color:var(--brand);font-size:11px;letter-spacing:.14em;">Recent activity</p>
-        <% if (events && events.length) { %>
-          <div class="auth-events">
-            <% events.forEach(e => { %>
-              <div class="auth-event">
-                <div class="auth-event-icon <%= e.tone %>">
-                  <i class="bi <%= e.icon %>"></i>
-                </div>
-                <div class="auth-event-body">
-                  <div class="auth-event-headline"><%= e.headline %></div>
-                  <div class="auth-event-meta">
-                    <%= dateTime(e.created_at) %><% if (e.device) { %> · <%= e.device %><% } %><% if (e.ip) { %> · <%= e.ip %><% } %>
-                  </div>
-                </div>
-                <span class="auth-event-tag <%= e.tag %>"><%= e.tag %></span>
-              </div>
-            <% }) %>
-          </div>
-        <% } else { %>
-          <p class="small text-secondary mb-0">No recent activity recorded yet.</p>
-        <% } %>
-      </div>
-    </div>
   </div>
 
-  <!-- RIGHT — change password -->
+  <!-- RIGHT — change password + recent activity stacked -->
   <div class="col-lg-7">
     <div class="card border-0 shadow-sm" style="background:var(--paper)">
       <div class="card-body p-4">
@@ -136,6 +110,32 @@
             <%= user.provider === 'local' ? 'Update password' : 'Set password' %>
           </button>
         </form>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mt-3" style="background:var(--paper)">
+      <div class="card-body p-4">
+        <p class="text-uppercase fw-semibold mb-3" style="color:var(--brand);font-size:11px;letter-spacing:.14em;">Recent activity</p>
+        <% if (events && events.length) { %>
+          <div class="auth-events">
+            <% events.forEach(e => { %>
+              <div class="auth-event">
+                <div class="auth-event-icon <%= e.tone %>">
+                  <i class="bi <%= e.icon %>"></i>
+                </div>
+                <div class="auth-event-body">
+                  <div class="auth-event-headline"><%= e.headline %></div>
+                  <div class="auth-event-meta">
+                    <%= dateTime(e.created_at) %><% if (e.device) { %> · <%= e.device %><% } %><% if (e.ip) { %> · <%= e.ip %><% } %>
+                  </div>
+                </div>
+                <span class="auth-event-tag <%= e.tag %>"><%= e.tag %></span>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p class="small text-secondary mb-0">No recent activity recorded yet.</p>
+        <% } %>
       </div>
     </div>
   </div>
