@@ -1,6 +1,7 @@
 // server.js
 require('dotenv').config();
 const express = require('express');
+const helmet = require('helmet');
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -9,9 +10,33 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Render terminates HTTPS at its proxy; trusting 1 hop lets req.ip see the
+// real client (for rate limiting) and lets cookie `secure` flag work over TLS.
+app.set('trust proxy', 1);
 
 // Initialize database (runs schema on first start)
 require('./config/database');
+
+// Security headers. CSP allows our CDN deps (Bootstrap, Chart.js) and inline
+// scripts because templates use legacy onclick handlers; tightening to nonces
+// is a separate hardening pass.
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
+      styleSrc: ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
+      fontSrc: ["'self'", 'https://cdn.jsdelivr.net', 'data:'],
+      imgSrc: ["'self'", 'data:'],
+      connectSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+}));
 
 // View engine
 app.set('view engine', 'ejs');
@@ -31,11 +56,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session + Flash
+// Session + Flash. Cookie hardened for production:
+// - httpOnly: blocks JS access (XSS-token-theft mitigation)
+// - sameSite=lax: blocks cross-site POSTs (CSRF mitigation, partial)
+// - secure: HTTPS-only when on Render/production
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: isProduction,
+    maxAge: 24 * 60 * 60 * 1000,
+  },
 }));
 app.use(flash());
 
