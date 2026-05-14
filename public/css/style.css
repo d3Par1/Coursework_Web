@@ -224,6 +224,17 @@ footer.bg-light {
 :root[data-theme="dark"] .category-chip { opacity: 0.85; }
 
 /* ============================================================
+   Container width cap at ultra-wide viewports — Bootstrap defaults
+   .container to 1320px at xxl (≥1400px), which leaves ~620px of empty
+   margin on each side of a 2560px screen. Cap at 1200px so the navbar
+   right-side controls (theme toggle, avatar, logout) sit closer to the
+   brand and the dashboard data feels focused rather than sprawling.
+   ============================================================ */
+@media (min-width: 1400px) {
+  .container { max-width: 1200px; }
+}
+
+/* ============================================================
    Masthead utility strip — date + live FX rates above the navbar
    ============================================================ */
 .masthead {
