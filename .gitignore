@@ -8,4 +8,6 @@ node_modules/
 *.docx
 docs/*.js
 docs/CW_*.md
+docs/CW_*.zip
+docs/reference-extracts/
 .idea/
