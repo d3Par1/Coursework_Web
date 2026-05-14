@@ -151,6 +151,40 @@ Implemented controls and the CWE / OWASP category they address:
 
 ---
 
+## Screenshots
+
+### Authentication
+
+| Sign in | Create account | Validation |
+|---|---|---|
+| ![Login page](docs/screenshots/01-login-page.png) | ![Register page](docs/screenshots/02-register-page.png) | ![Register validation](docs/screenshots/03-register-validation.png) |
+
+### Dashboard
+
+| Empty state | With live FX rates | Charts populated |
+|---|---|---|
+| ![Dashboard](docs/screenshots/04-dashboard.png) | ![Dashboard with FX](docs/screenshots/11-dashboard-fx.png) | ![Dashboard with charts](docs/screenshots/12-dashboard-with-charts.png) |
+
+### Charts (Chart.js)
+
+| Spending by category (donut) | Income vs expenses (bar, last 6 months) |
+|---|---|
+| ![Pie chart](docs/screenshots/13-pie-chart.png) | ![Bar chart](docs/screenshots/14-bar-chart.png) |
+
+### Accounts CRUD
+
+| Accounts list | Create / edit form | Validation errors |
+|---|---|---|
+| ![Accounts list](docs/screenshots/08-accounts-list.png) | ![Account form](docs/screenshots/09-account-form.png) | ![Account validation](docs/screenshots/10-account-validation.png) |
+
+### Responsive (mobile)
+
+![Mobile dashboard](docs/screenshots/07-mobile-dashboard.png)
+
+*All screenshots taken against the live Render deployment with seeded demo data, light theme. Dark-theme variants render automatically via `prefers-color-scheme` or the navbar toggle.*
+
+---
+
 ## Getting started
 
 ### Prerequisites
