@@ -234,6 +234,22 @@ footer.bg-light {
   .container { max-width: 1200px; }
 }
 
+/* 16:10 wide displays (2560×1600, 1920×1200, 1440×900) have lots of
+   vertical real-estate, so a horizontally-centered container leaves the
+   navbar's right-side controls floating in dead space on the right edge.
+   Left-align the navbar's container instead — items cluster near the
+   brand on the LEFT side of the screen, easy to reach.
+   Page content (dashboard, tables, forms) stays centered for readability.
+   16:9 screens (1920×1080, 2560×1440, 3840×2160) keep the current
+   centered layout — aspect-ratio 1.78 doesn't match max-aspect-ratio:16/10. */
+@media (min-width: 1400px) and (max-aspect-ratio: 16/10) {
+  .navbar > .container {
+    margin-left: 32px;
+    margin-right: auto;
+    max-width: 1080px;
+  }
+}
+
 /* ============================================================
    Masthead utility strip — date + live FX rates above the navbar
    ============================================================ */
