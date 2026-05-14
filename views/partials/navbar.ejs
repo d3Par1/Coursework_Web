@@ -7,65 +7,80 @@
       <span style="color:var(--ink)">Finance Manager</span>
     </a>
     <button class="navbar-toggler" type="button"
-            data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            data-bs-toggle="offcanvas" data-bs-target="#navDrawer"
+            aria-controls="navDrawer" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <% if (locals.currentUser) { %>
-      <ul class="navbar-nav me-auto">
-        <% const items = [
-          ['/',             'Dashboard'],
-          ['/accounts',     'Accounts'],
-          ['/transactions', 'Transactions'],
-          ['/categories',   'Categories'],
-          ['/budgets',      'Budgets'],
-        ];
-        const here = locals.currentPath || ''; %>
-        <% items.forEach(([href, label]) => {
-             const active = here === href; %>
-          <li class="nav-item">
-            <a class="nav-link <%= active ? 'active fw-semibold' : '' %>"
-               href="<%= href %>"
-               style="color:<%= active ? 'var(--brand)' : 'var(--ink-soft)' %>"><%= label %></a>
-          </li>
-        <% }); %>
-      </ul>
-      <% } %>
-      <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item me-2">
-          <button id="theme-toggle" type="button" class="btn btn-sm btn-outline-secondary"
-                  aria-label="Toggle theme" title="Toggle light/dark theme"
-                  style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;">
-            <span class="theme-icon-light" aria-hidden="true">&#9728;</span>
-            <span class="theme-icon-dark" aria-hidden="true" style="display:none">&#9790;</span>
-          </button>
-        </li>
+
+    <div class="offcanvas-lg offcanvas-end" tabindex="-1" id="navDrawer"
+         aria-labelledby="navDrawerLabel"
+         style="background:var(--paper);max-width:300px;">
+      <div class="offcanvas-header border-bottom d-lg-none" style="border-color:var(--rule)!important">
+        <div id="navDrawerLabel" class="d-flex align-items-center gap-2 fw-bold">
+          <span style="width:28px;height:28px;border-radius:7px;background:var(--brand);
+                       color:#fff;display:inline-flex;align-items:center;justify-content:center;
+                       font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">FM</span>
+          <span style="color:var(--ink)">Finance Manager</span>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#navDrawer" aria-label="Close"></button>
+      </div>
+
+      <div class="offcanvas-body p-lg-0">
         <% if (locals.currentUser) { %>
-          <li class="nav-item d-flex align-items-center gap-2 me-2">
-            <a href="/auth/profile" class="d-flex align-items-center gap-2 text-decoration-none">
-              <span style="width:28px;height:28px;border-radius:50%;background:var(--brand-soft);
-                           color:var(--brand-ink);display:inline-flex;align-items:center;
-                           justify-content:center;font-size:11px;font-weight:600;">
-                <%= currentUser.name.slice(0,2).toUpperCase() %>
-              </span>
-              <span class="small" style="color:var(--ink-soft)"><%= currentUser.name %></span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <form action="/auth/logout" method="POST" class="d-inline">
-              <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
-            </form>
-          </li>
-        <% } else { %>
-          <li class="nav-item">
-            <a class="btn btn-sm btn-outline-secondary me-2" href="/auth/login">Sign in</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-sm btn-primary" href="/auth/register">Create account</a>
-          </li>
+        <ul class="navbar-nav me-auto">
+          <% const items = [
+            ['/',             'Dashboard'],
+            ['/accounts',     'Accounts'],
+            ['/transactions', 'Transactions'],
+            ['/categories',   'Categories'],
+            ['/budgets',      'Budgets'],
+          ];
+          const here = locals.currentPath || ''; %>
+          <% items.forEach(([href, label]) => {
+               const active = here === href; %>
+            <li class="nav-item">
+              <a class="nav-link <%= active ? 'active fw-semibold' : '' %>"
+                 href="<%= href %>"
+                 style="color:<%= active ? 'var(--brand)' : 'var(--ink-soft)' %>"><%= label %></a>
+            </li>
+          <% }); %>
+        </ul>
         <% } %>
-      </ul>
+        <ul class="navbar-nav ms-lg-auto align-items-lg-center mt-3 mt-lg-0">
+          <li class="nav-item me-lg-2 mb-2 mb-lg-0">
+            <button id="theme-toggle" type="button" class="btn btn-sm btn-outline-secondary"
+                    aria-label="Toggle theme" title="Toggle light/dark theme"
+                    style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;">
+              <span class="theme-icon-light" aria-hidden="true">&#9728;</span>
+              <span class="theme-icon-dark" aria-hidden="true" style="display:none">&#9790;</span>
+            </button>
+          </li>
+          <% if (locals.currentUser) { %>
+            <li class="nav-item d-flex align-items-center gap-2 me-lg-2 mb-2 mb-lg-0">
+              <a href="/auth/profile" class="d-flex align-items-center gap-2 text-decoration-none">
+                <span style="width:28px;height:28px;border-radius:50%;background:var(--brand-soft);
+                             color:var(--brand-ink);display:inline-flex;align-items:center;
+                             justify-content:center;font-size:11px;font-weight:600;">
+                  <%= currentUser.name.slice(0,2).toUpperCase() %>
+                </span>
+                <span class="small" style="color:var(--ink-soft)"><%= currentUser.name %></span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <form action="/auth/logout" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
+              </form>
+            </li>
+          <% } else { %>
+            <li class="nav-item mb-2 mb-lg-0">
+              <a class="btn btn-sm btn-outline-secondary me-lg-2" href="/auth/login">Sign in</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-sm btn-primary" href="/auth/register">Create account</a>
+            </li>
+          <% } %>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>

@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcryptjs');
+const { UAParser } = require('ua-parser-js');
 const db = require('../config/database');
 const { handleValidationErrors } = require('../middleware/validation');
 const { requireAuth } = require('../middleware/auth');
@@ -10,6 +11,41 @@ const { passport, googleEnabled } = require('../services/oauth');
 const { verifyTelegramAuth, telegramEnabled } = require('../services/telegram');
 
 const router = express.Router();
+
+// Visual metadata for each auth_events.event value. Drives icon/color/copy
+// in the profile timeline (views/auth/profile.ejs).
+const EVENT_DISPLAY = {
+  login:                       { icon: 'bi-check-circle-fill',      tone: 'ok',    headline: 'Signed in' },
+  login_failed:                { icon: 'bi-exclamation-octagon-fill', tone: 'fail',  headline: 'Failed login attempt', tag: 'blocked' },
+  login_failed_telegram:       { icon: 'bi-exclamation-octagon-fill', tone: 'fail',  headline: 'Telegram sign-in rejected', tag: 'blocked' },
+  register:                    { icon: 'bi-person-plus-fill',        tone: 'ok',    headline: 'Account created' },
+  register_failed_duplicate:   { icon: 'bi-shield-exclamation',      tone: 'fail',  headline: 'Duplicate email blocked' },
+  logout:                      { icon: 'bi-box-arrow-right',         tone: 'muted', headline: 'Signed out' },
+  password_changed:            { icon: 'bi-pencil-fill',             tone: 'brand', headline: 'Password changed' },
+  password_set:                { icon: 'bi-key-fill',                tone: 'brand', headline: 'Password set' },
+};
+const DEFAULT_EVENT_DISPLAY = { icon: 'bi-circle-fill', tone: 'muted', headline: null };
+
+function enrichEvent(row) {
+  const meta = EVENT_DISPLAY[row.event] || { ...DEFAULT_EVENT_DISPLAY, headline: row.event };
+  let device = '';
+  if (row.user_agent) {
+    try {
+      const ua = UAParser(row.user_agent);
+      const browser = ua.browser.name || 'Unknown browser';
+      const os = ua.os.name || 'Unknown OS';
+      device = `${browser} on ${os}`;
+    } catch { device = ''; }
+  }
+  return {
+    ...row,
+    icon: meta.icon,
+    tone: meta.tone,
+    headline: meta.headline || row.event,
+    tag: meta.tag || (row.provider !== 'local' ? row.provider : 'email'),
+    device,
+  };
+}
 
 // Smoke tests fire many auth requests back-to-back; skip the limiter under test.
 const isTest = () => process.env.NODE_ENV === 'test';
@@ -251,13 +287,14 @@ if (telegramEnabled) {
 
 router.get('/profile', requireAuth, (req, res) => {
   const user = User.findById(req.session.userId);
-  const events = db.prepare(
-    `SELECT event, provider, ip, created_at
+  const rows = db.prepare(
+    `SELECT event, provider, ip, user_agent, created_at
      FROM auth_events
      WHERE user_id = ?
      ORDER BY created_at DESC
-     LIMIT 10`
+     LIMIT 20`
   ).all(req.session.userId);
+  const events = rows.map(enrichEvent);
   res.render('auth/profile', {
     title: 'Profile',
     user,
@@ -286,9 +323,9 @@ router.post('/password', requireAuth, passwordChangeLimiter, [
     const { currentPassword } = req.body;
     if (!currentPassword || !User.verifyPassword(currentPassword, user.password_hash)) {
       const events = db.prepare(
-        `SELECT event, provider, ip, created_at FROM auth_events
-         WHERE user_id = ? ORDER BY created_at DESC LIMIT 10`
-      ).all(req.session.userId);
+        `SELECT event, provider, ip, user_agent, created_at FROM auth_events
+         WHERE user_id = ? ORDER BY created_at DESC LIMIT 20`
+      ).all(req.session.userId).map(enrichEvent);
       return res.status(401).render('auth/profile', {
         title: 'Profile',
         user: User.findById(req.session.userId),
@@ -301,7 +338,10 @@ router.post('/password', requireAuth, passwordChangeLimiter, [
   const result = handleValidationErrors(req, res, 'auth/profile', {
     title: 'Profile',
     user: User.findById(req.session.userId),
-    events: [],
+    events: db.prepare(
+      `SELECT event, provider, ip, user_agent, created_at FROM auth_events
+       WHERE user_id = ? ORDER BY created_at DESC LIMIT 20`
+    ).all(req.session.userId).map(enrichEvent),
   });
   if (result) return;
 

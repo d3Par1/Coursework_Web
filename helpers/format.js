@@ -27,4 +27,17 @@ module.exports = {
     if (d >= ytd) return 'Yesterday';
     return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
   },
+  /** "Today · 14:02" / "Yesterday · 09:18" / "Sat 4 May · 03:14" */
+  dateTime: (iso) => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const ytd = new Date(today); ytd.setDate(ytd.getDate() - 1);
+    let day;
+    if (d >= today) day = 'Today';
+    else if (d >= ytd) day = 'Yesterday';
+    else day = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    return `${day} · ${time}`;
+  },
 };

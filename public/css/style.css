@@ -198,4 +198,72 @@ footer.bg-light {
 .btn-provider:active { transform: translateY(1px); }
 .btn-provider svg { flex-shrink: 0; }
 .provider-block .telegram-widget-wrap iframe { border-radius: 8px !important; }
+.provider-rule { background: oklch(0.88 0.02 175); }
+:root[data-theme="dark"] .provider-rule { background: var(--rule); }
+:root[data-theme="dark"] .btn-provider {
+  background: var(--surface);
+  border-color: var(--rule-strong);
+  color: var(--ink);
+}
+:root[data-theme="dark"] .btn-provider:hover {
+  background: var(--paper);
+  border-color: var(--ink-soft);
+  color: var(--ink);
+}
+
+/* Category chips — dim slightly on dark surface so they don't look like alerts */
+:root[data-theme="dark"] .category-chip { opacity: 0.85; }
+
+/* ============================================================
+   Masthead utility strip — date + live FX rates above the navbar
+   ============================================================ */
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 18px;
+  background: var(--ink);
+  color: #d8d0bf;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.masthead-dot { color: var(--brand); opacity: 0.85; margin-right: 4px; }
+.masthead-cache { opacity: 0.5; margin-left: 4px; }
+:root[data-theme="dark"] .masthead { background: #0d0e11; color: #948e85; }
+@media (max-width: 575.98px) {
+  .masthead { font-size: 10px; padding: 5px 12px; }
+  .masthead-fxhide-sm { display: none; }
+}
+
+/* ============================================================
+   Auth event timeline (profile page)
+   ============================================================ */
+.auth-event { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.auth-event:last-child { border-bottom: none; }
+.auth-event-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 14px;
+}
+.auth-event-icon.ok    { background: var(--good-soft); color: var(--good); }
+.auth-event-icon.fail  { background: var(--bad-soft);  color: var(--bad); }
+.auth-event-icon.brand { background: var(--brand-soft); color: var(--brand); }
+.auth-event-icon.muted { background: var(--rule);      color: var(--ink-soft); }
+.auth-event-body { flex: 1; min-width: 0; }
+.auth-event-headline { font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.auth-event-meta { color: var(--muted); font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: .03em; }
+.auth-event-tag {
+  font-size: 10px; padding: 2px 8px; border-radius: 99px;
+  background: var(--rule); color: var(--ink-soft); font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  align-self: flex-start; margin-top: 4px;
+}
+.auth-event-tag.blocked { background: var(--bad-soft); color: var(--bad); }
+.auth-event-tag.google  { background: oklch(0.94 0.04 250); color: oklch(0.40 0.10 250); }
+.auth-event-tag.telegram { background: oklch(0.94 0.04 220); color: oklch(0.40 0.12 220); }
+:root[data-theme="dark"] .auth-event-tag.google  { background: oklch(0.30 0.06 250); color: oklch(0.85 0.08 250); }
+:root[data-theme="dark"] .auth-event-tag.telegram { background: oklch(0.30 0.06 220); color: oklch(0.85 0.10 220); }
 

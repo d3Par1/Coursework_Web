@@ -52,10 +52,11 @@ app.use(expressLayouts);
 app.set('layout', 'layout');
 
 // Money/date helpers available in all EJS templates
-const { money, signed, date } = require('./helpers/format');
+const { money, signed, date, dateTime } = require('./helpers/format');
 app.locals.money = money;
 app.locals.signed = signed;
 app.locals.dateLabel = date;
+app.locals.dateTime = dateTime;
 
 // OAuth provider availability — exposed to views so buttons hide when env
 // vars are missing. The actual strategy registration happens in services/oauth.js.
@@ -113,6 +114,9 @@ app.use((req, res, next) => {
   res.locals.currentPath = req.path;
   next();
 });
+
+// Masthead strip — date + live FX rates above the navbar (silent on failure).
+app.use(require('./middleware/fxStrip'));
 
 // Routes (auth first, then protected routes)
 app.use('/auth', require('./routes/auth'));
