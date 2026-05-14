@@ -231,7 +231,7 @@ footer.bg-light {
    brand and the dashboard data feels focused rather than sprawling.
    ============================================================ */
 @media (min-width: 1400px) {
-  .container { max-width: 1080px; }
+  .container { max-width: 1200px; }
 }
 
 /* ============================================================
