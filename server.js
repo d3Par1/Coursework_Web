@@ -19,18 +19,25 @@ app.set('trust proxy', 1);
 // Initialize database (runs schema on first start)
 require('./config/database');
 
-// Security headers. CSP allows our CDN deps (Bootstrap, Chart.js) and inline
-// scripts because templates use legacy onclick handlers; tightening to nonces
-// is a separate hardening pass.
+// Security headers. CSP allows our CDN deps (Bootstrap, Chart.js, Telegram
+// Login Widget, Google Fonts) and inline scripts because templates use legacy
+// onclick handlers; nonce-based CSP is a future hardening pass.
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
-      styleSrc: ["'self'", 'https://cdn.jsdelivr.net', "'unsafe-inline'"],
-      fontSrc: ["'self'", 'https://cdn.jsdelivr.net', 'data:'],
-      imgSrc: ["'self'", 'data:'],
+      scriptSrc: [
+        "'self'",
+        'https://cdn.jsdelivr.net',
+        'https://telegram.org',
+        'https://oauth.telegram.org',
+        "'unsafe-inline'",
+      ],
+      styleSrc: ["'self'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com', "'unsafe-inline'"],
+      fontSrc: ["'self'", 'https://cdn.jsdelivr.net', 'https://fonts.gstatic.com', 'data:'],
+      imgSrc: ["'self'", 'data:', 'https://t.me', 'https://*.googleusercontent.com'],
       connectSrc: ["'self'"],
+      frameSrc: ["'self'", 'https://oauth.telegram.org'],
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"],
     },
@@ -49,6 +56,14 @@ const { money, signed, date } = require('./helpers/format');
 app.locals.money = money;
 app.locals.signed = signed;
 app.locals.dateLabel = date;
+
+// OAuth provider availability — exposed to views so buttons hide when env
+// vars are missing. The actual strategy registration happens in services/oauth.js.
+const { passport, googleEnabled } = require('./services/oauth');
+const { telegramEnabled, TELEGRAM_BOT_USERNAME } = require('./services/telegram');
+app.locals.googleEnabled = googleEnabled;
+app.locals.telegramEnabled = telegramEnabled;
+app.locals.telegramBotUsername = TELEGRAM_BOT_USERNAME;
 
 // Middleware
 app.use(morgan('dev'));
@@ -73,11 +88,20 @@ app.use(session({
 }));
 app.use(flash());
 
+// Passport (initialize only — no session integration; auth routes manage
+// req.session themselves to keep the session-regeneration defense in one place).
+app.use(passport.initialize());
+
 // Make flash messages available in all views
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   next();
+});
+
+// Health check for Render uptime monitoring + external probes.
+app.get('/healthz', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime() });
 });
 
 // Auth middleware

@@ -1,0 +1,124 @@
+<% function err(field) {
+  return locals.errors && errors.find(e => e.path === field);
+} %>
+
+<div class="row g-4 mt-1">
+  <!-- LEFT — identity + linked providers -->
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm" style="background:var(--paper)">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <% if (user.avatar_url) { %>
+            <img src="<%= user.avatar_url %>" alt="" width="64" height="64"
+                 style="border-radius:50%;border:2px solid var(--rule);object-fit:cover;">
+          <% } else { %>
+            <div style="width:64px;height:64px;border-radius:50%;background:var(--brand-soft);
+                        color:var(--brand-ink);display:inline-flex;align-items:center;justify-content:center;
+                        font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;">
+              <%= user.name.slice(0,2).toUpperCase() %>
+            </div>
+          <% } %>
+          <div>
+            <h2 class="fw-bold mb-0" style="font-size:24px;letter-spacing:-0.02em"><%= user.name %></h2>
+            <p class="mb-0 small" style="color:var(--muted)"><%= user.email %></p>
+          </div>
+        </div>
+
+        <p class="text-uppercase fw-semibold mb-2 mt-4" style="color:var(--brand);font-size:11px;letter-spacing:.14em;">Sign-in methods</p>
+        <ul class="list-unstyled mb-0">
+          <li class="d-flex justify-content-between align-items-center py-2 border-bottom" style="border-color:var(--rule)!important">
+            <span class="small">Email + password</span>
+            <span class="badge <%= user.provider === 'local' ? 'bg-success-subtle text-success-emphasis' : 'bg-light text-secondary' %>" style="font-weight:500;">
+              <%= user.provider === 'local' ? 'Primary' : 'Set up below' %>
+            </span>
+          </li>
+          <li class="d-flex justify-content-between align-items-center py-2 border-bottom" style="border-color:var(--rule)!important">
+            <span class="small">Google</span>
+            <span class="badge <%= user.google_id ? 'bg-success-subtle text-success-emphasis' : 'bg-light text-secondary' %>" style="font-weight:500;">
+              <%= user.google_id ? 'Connected' : 'Not linked' %>
+            </span>
+          </li>
+          <li class="d-flex justify-content-between align-items-center py-2">
+            <span class="small">Telegram</span>
+            <span class="badge <%= user.telegram_id ? 'bg-success-subtle text-success-emphasis' : 'bg-light text-secondary' %>" style="font-weight:500;">
+              <%= user.telegram_id ? 'Connected' : 'Not linked' %>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mt-3" style="background:var(--paper)">
+      <div class="card-body p-4">
+        <p class="text-uppercase fw-semibold mb-3" style="color:var(--brand);font-size:11px;letter-spacing:.14em;">Recent activity</p>
+        <% if (events && events.length) { %>
+          <ul class="list-unstyled mb-0 small">
+            <% events.forEach(e => { %>
+              <li class="d-flex justify-content-between align-items-center py-2 border-bottom" style="border-color:var(--rule)!important">
+                <span><%= e.event %> <% if (e.provider !== 'local') { %><span class="text-secondary">· <%= e.provider %></span><% } %></span>
+                <span class="text-secondary" style="font-family:'JetBrains Mono',monospace;font-size:11px;"><%= new Date(e.created_at).toLocaleString('uk-UA') %></span>
+              </li>
+            <% }) %>
+          </ul>
+        <% } else { %>
+          <p class="small text-secondary mb-0">No recent activity recorded yet.</p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT — change password -->
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm" style="background:var(--paper)">
+      <div class="card-body p-4">
+        <p class="text-uppercase fw-semibold mb-1" style="color:var(--brand);font-size:11px;letter-spacing:.14em;">Security</p>
+        <h3 class="fw-bold mb-3" style="letter-spacing:-0.02em;font-size:22px">
+          <%= user.provider === 'local' ? 'Change password' : 'Set a password' %>
+        </h3>
+        <p class="text-secondary small mb-4">
+          <% if (user.provider === 'local') { %>
+            Choose a new password of at least 6 characters. Your sessions on this device will remain valid.
+          <% } else { %>
+            You signed up via <%= user.provider %>. Setting a password lets you sign in with email + password as a fallback.
+          <% } %>
+        </p>
+
+        <form action="/auth/password" method="POST" class="needs-validation" novalidate>
+          <% if (user.provider === 'local') { %>
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label small fw-semibold">Current password</label>
+            <input type="password" id="currentPassword" name="currentPassword" autocomplete="current-password"
+                   class="form-control py-2 <%= err('currentPassword') ? 'is-invalid' : '' %>" required>
+            <div class="invalid-feedback">
+              <%= err('currentPassword') ? err('currentPassword').msg : 'Enter your current password' %>
+            </div>
+          </div>
+          <% } %>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="newPassword" class="form-label small fw-semibold">New password</label>
+              <input type="password" id="newPassword" name="newPassword" autocomplete="new-password" minlength="6"
+                     class="form-control py-2 <%= err('newPassword') ? 'is-invalid' : '' %>" required>
+              <div class="invalid-feedback">
+                <%= err('newPassword') ? err('newPassword').msg : 'At least 6 characters' %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="confirmPassword" class="form-label small fw-semibold">Confirm new password</label>
+              <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password"
+                     class="form-control py-2 <%= err('confirmPassword') ? 'is-invalid' : '' %>" required>
+              <div class="invalid-feedback">
+                <%= err('confirmPassword') ? err('confirmPassword').msg : 'Please confirm' %>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary py-2 px-4" type="submit" style="font-size:14px">
+            <%= user.provider === 'local' ? 'Update password' : 'Set password' %>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

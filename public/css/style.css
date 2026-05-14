@@ -114,3 +114,88 @@ footer.bg-light {
   border-top: 1px solid var(--rule);
   color: var(--muted);
 }
+
+/* ============================================================
+   Dark theme — overrides via [data-theme="dark"] on <html>.
+   Inverts lightness on neutrals; nudges brand chroma up so it
+   stays legible on dark surfaces.
+   ============================================================ */
+:root[data-theme="dark"] {
+  --brand:             oklch(0.72 0.08 175);
+  --brand-soft:        oklch(0.30 0.04 175);
+  --brand-ink:         oklch(0.88 0.06 175);
+  --good:              oklch(0.74 0.13 150);
+  --good-soft:         oklch(0.30 0.06 150);
+  --bad:               oklch(0.72 0.17 25);
+  --bad-soft:          oklch(0.30 0.06 25);
+  --warn:              oklch(0.80 0.14 75);
+  --bg:                #15161a;
+  --paper:             #1c1e23;
+  --surface:           #23262d;
+  --ink:               #f1efe9;
+  --ink-soft:          #b7b3a9;
+  --muted:             #7a766d;
+  --rule:              #2c2f37;
+  --rule-strong:       #3a3e48;
+}
+
+:root[data-theme="dark"] .card { background: var(--surface); border-color: var(--rule); }
+:root[data-theme="dark"] .navbar { background: var(--paper) !important; border-color: var(--rule) !important; }
+:root[data-theme="dark"] .form-control,
+:root[data-theme="dark"] .form-select {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+:root[data-theme="dark"] .form-control:focus,
+:root[data-theme="dark"] .form-select:focus {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 0.2rem oklch(0.72 0.08 175 / 0.20);
+}
+:root[data-theme="dark"] .form-control::placeholder { color: var(--muted); }
+:root[data-theme="dark"] .table { color: var(--ink); --bs-table-bg: var(--surface); --bs-table-color: var(--ink); }
+:root[data-theme="dark"] .table-hover > tbody > tr:hover > * { --bs-table-bg: var(--paper); color: var(--ink); }
+:root[data-theme="dark"] .progress { background: #2c2f37; }
+:root[data-theme="dark"] .alert-success { background: var(--good-soft); color: var(--good); border-color: oklch(0.45 0.10 150); }
+:root[data-theme="dark"] .alert-danger { background: var(--bad-soft); color: var(--bad); border-color: oklch(0.45 0.12 25); }
+:root[data-theme="dark"] .alert-info { background: var(--brand-soft); color: var(--brand-ink); border-color: oklch(0.45 0.05 175); }
+:root[data-theme="dark"] .btn-outline-secondary {
+  --bs-btn-color: var(--ink-soft);
+  --bs-btn-border-color: var(--rule-strong);
+  --bs-btn-hover-bg: var(--rule);
+  --bs-btn-hover-color: var(--ink);
+  --bs-btn-hover-border-color: var(--rule-strong);
+}
+:root[data-theme="dark"] .badge.bg-light { background-color: var(--paper) !important; color: var(--ink-soft) !important; }
+:root[data-theme="dark"] .text-secondary { color: var(--ink-soft) !important; }
+:root[data-theme="dark"] .border-bottom,
+:root[data-theme="dark"] .border-top { border-color: var(--rule) !important; }
+
+/* ============================================================
+   OAuth provider buttons
+   ============================================================ */
+.btn-provider {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: background 0.15s, border-color 0.15s, transform 0.05s;
+}
+.btn-provider:hover {
+  background: var(--paper);
+  border-color: var(--ink-soft);
+  color: var(--ink);
+}
+.btn-provider:active { transform: translateY(1px); }
+.btn-provider svg { flex-shrink: 0; }
+.provider-block .telegram-widget-wrap iframe { border-radius: 8px !important; }
+
