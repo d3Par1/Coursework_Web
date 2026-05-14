@@ -231,7 +231,19 @@ footer.bg-light {
   text-transform: uppercase;
 }
 .masthead-dot { color: var(--brand); opacity: 0.85; margin-right: 4px; }
-.masthead-cache { opacity: 0.5; margin-left: 4px; }
+.masthead-cache { opacity: 0.5; }
+
+/* Navbar links — make hover affordance explicit (text-decoration was killed
+   by Bootstrap's .nav-link reset). */
+.navbar-nav .nav-link { transition: color 0.15s, text-decoration-color 0.15s; }
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus-visible {
+  color: var(--brand) !important;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  text-decoration-color: var(--brand);
+}
 :root[data-theme="dark"] .masthead { background: #0d0e11; color: #948e85; }
 @media (max-width: 575.98px) {
   .masthead { font-size: 10px; padding: 5px 12px; }

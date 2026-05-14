@@ -33,7 +33,7 @@
           <% const sym = r.code === 'USD' ? '$' : r.code === 'EUR' ? '€' : r.code === 'GBP' ? '£' : r.code; %>
           <%= sym %><%= r.rate.toFixed(4) %>
         <% }); %>
-        <span class="masthead-cache">· cached</span>
+        · <span class="masthead-cache">cached</span>
       </span>
     </div>
   <% } %>
