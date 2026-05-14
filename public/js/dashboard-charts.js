@@ -5,13 +5,18 @@
 (function () {
   'use strict';
 
+  function themeColor(varName, fallback) {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    return v || fallback;
+  }
+
   function showEmptyState(canvasId, message) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     ctx.save();
-    ctx.fillStyle = '#6c757d';
-    ctx.font = '14px sans-serif';
+    ctx.fillStyle = themeColor('--ink-soft', '#6c757d');
+    ctx.font = '500 15px Manrope, system-ui, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(message, canvas.width / 2, canvas.height / 2);
@@ -41,7 +46,7 @@
             data: json.data,
             backgroundColor: json.colors,
             borderWidth: 2,
-            borderColor: '#fbfaf6',
+            borderColor: themeColor('--surface', '#fbfaf6'),
           }],
         },
         options: {
@@ -120,15 +125,16 @@
           scales: {
             y: {
               beginAtZero: true,
-              grid: { color: 'rgba(230, 224, 210, 0.6)' },
+              grid: { color: themeColor('--rule', 'rgba(230, 224, 210, 0.6)') },
               ticks: {
                 callback: (val) => val >= 1000 ? (val / 1000) + 'k ₴' : val + ' ₴',
                 font: { size: 11 },
+                color: themeColor('--ink-soft', '#4a4742'),
               },
             },
             x: {
               grid: { display: false },
-              ticks: { font: { size: 11 } },
+              ticks: { font: { size: 11 }, color: themeColor('--ink-soft', '#4a4742') },
             },
           },
         },

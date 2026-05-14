@@ -16,10 +16,10 @@
 
   function syncIcons(theme) {
     document.querySelectorAll('#theme-toggle .theme-icon-light').forEach((el) => {
-      el.style.display = theme === 'dark' ? 'none' : 'inline';
+      el.style.display = theme === 'dark' ? 'none' : '';
     });
     document.querySelectorAll('#theme-toggle .theme-icon-dark').forEach((el) => {
-      el.style.display = theme === 'dark' ? 'inline' : 'none';
+      el.style.display = theme === 'dark' ? '' : 'none';
     });
   }
 
