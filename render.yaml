@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: finance-app
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: develop
+    autoDeploy: true
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DB_PATH
+        value: ./finance.db
