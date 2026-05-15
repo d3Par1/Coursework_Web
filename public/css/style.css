@@ -254,6 +254,18 @@ footer.bg-light {
 @media (min-width: 1920px) { .container { max-width: 1720px; } }
 @media (min-width: 2400px) { .container { max-width: 1920px; } }
 
+/* Navbar overflow fix for 16:10 HiDPI displays (e.g. 2560x1600 @ 2x = 1280
+   CSS-px). The .offcanvas-lg element has an inline max-width:300px set for
+   its mobile drawer state; Bootstrap's responsive utility reverts it to a
+   normal flex container at lg+ but does not reset that inline style, so
+   nav items overflow horizontally and get clipped by overflow-x:hidden on
+   narrow viewports. Drop the constraint above lg and add a defensive
+   min-width:0 so future content can shrink rather than spill. */
+@media (min-width: 992px) {
+  .navbar .offcanvas-lg { max-width: none !important; }
+  .navbar .offcanvas-body { min-width: 0; }
+}
+
 
 
 /* ============================================================
