@@ -28,7 +28,7 @@ const categoryRules = [
 
 // ── GET /categories ───────────────────────────────────────────────────────────
 router.get('/', (req, res) => {
-  const categories = Category.findByUserId(req.session.userId);
+  const categories = Category.findByUserIdWithMonthly(req.session.userId);
   const expense = categories.filter(c => c.type === 'expense');
   const income  = categories.filter(c => c.type === 'income');
 

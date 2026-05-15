@@ -1,6 +1,7 @@
 <%# views/budgets/index.ejs %>
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h1><i class="bi bi-piggy-bank"></i> Budgets</h1>
+  <p class="text-uppercase fw-semibold mb-1" style="color:var(--brand);font-size:11px;letter-spacing:.1em;">Monthly limits</p>
+  <h1 class="mb-0" style="letter-spacing:-0.02em">Budgets</h1>
   <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
     <i class="bi bi-plus-lg"></i> Set Budget
   </button>
@@ -57,17 +58,13 @@
 
 <!-- Budget list -->
 <% if (budgets.length === 0) { %>
-  <div class="text-center py-5 px-3">
-    <div class="mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
-         style="width:64px;height:64px;border-radius:16px;background:var(--brand-soft);color:var(--brand)">
-      <i class="bi bi-piggy-bank" style="font-size:28px"></i>
-    </div>
-    <h5 class="fw-semibold mb-1">No budgets for this month</h5>
-    <p class="text-secondary mb-3" style="max-width:34ch;margin-left:auto;margin-right:auto">
-      Set monthly limits per category to keep your spending in check.
-    </p>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBudgetModal">Set your first budget</button>
-  </div>
+  <%- include('../partials/empty-state', {
+  icon:     'bi-piggy-bank',
+  title:    'No budgets for this month',
+  message:  'Set monthly limits per category to keep your spending in check.',
+  ctaLabel: 'Set your first budget',
+  ctaUrl:   '#addBudgetModal'
+  }) %>
 <% } else { %>
   <div class="row g-3">
     <% budgets.forEach(b => { %>
@@ -214,3 +211,4 @@
     document.getElementById('editBudgetMonth').value  = btn.dataset.month;
     document.getElementById('editBudgetCatName').textContent = btn.dataset.name;
   });
+</script>

@@ -89,6 +89,12 @@ a:hover { color: var(--brand-ink); }
 }
 .progress-bar { background: var(--brand); }
 
+/* Budget cards — soft red tint when over limit (SPEC §9B) */
+.card.over-budget {
+  background: var(--bad-soft);
+  border-color: oklch(0.85 0.07 25);
+}
+
 .alert-success { background: var(--good-soft); border-color: oklch(0.85 0.07 150); color: var(--good); }
 .alert-danger  { background: var(--bad-soft); border-color: oklch(0.85 0.07 25); color: var(--bad); }
 .alert-info    { background: var(--brand-soft); border-color: oklch(0.85 0.03 175); color: var(--brand-ink); }

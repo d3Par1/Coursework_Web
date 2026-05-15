@@ -39,7 +39,7 @@
                             <option value="">Select account...</option>
                             <% accounts.forEach(acc => { %>
                                 <option value="<%= acc.id %>" <%= (oldInput.account_id == acc.id) ? 'selected' : '' %>>
-                                    <%= acc.name %> (<%= acc.balance.toFixed(2) %> <%= acc.currency %>)
+                                    <%= acc.name %> (<%= money(acc.balance, acc.currency) %>)
                                 </option>
                             <% }); %>
                         </select>
@@ -77,8 +77,18 @@
 
                     <div class="mb-3">
                         <label class="form-label">Date *</label>
-                        <input type="date" name="date" class="form-control" required
+                        <!-- hidden input carries the actual value submitted -->
+                        <input type="hidden" name="date"
                                value="<%= oldInput.date || new Date().toISOString().slice(0,10) %>">
+                        <!-- selected date label -->
+                        <div class="mb-2 small fw-medium" id="cal-selected-label"
+                             style="color:var(--brand)">
+                            <%= oldInput.date
+                                    ? new Date(oldInput.date).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' })
+                                    : 'Today' %>
+                        </div>
+                        <!-- calendar mount point -->
+                        <div id="cal-picker" style="max-width:320px"></div>
                     </div>
 
                     <div class="mb-3">
@@ -98,3 +108,40 @@
         </div>
     </div>
 </div>
+
+<style>
+    .cal-wrap { font-size: 14px; }
+    .cal-nav {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 8px;
+    }
+    .cal-title { font-weight: 600; color: var(--ink); }
+    .cal-grid {
+        display: grid; grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+    }
+    .cal-dow {
+        text-align: center; font-size: 11px; font-weight: 600;
+        color: var(--muted); padding: 4px 0; letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+    .cal-cell {
+        position: relative; text-align: center; padding: 6px 2px;
+        border-radius: 7px; cursor: pointer; font-variant-numeric: tabular-nums;
+        color: var(--ink-soft); transition: background .12s;
+    }
+    .cal-cell:hover { background: var(--brand-soft); color: var(--brand-ink); }
+    .cal-cell.cal-today { font-weight: 700; color: var(--brand); }
+    .cal-cell.cal-selected {
+        background: var(--brand); color: #fff; font-weight: 600;
+    }
+    .cal-cell.cal-selected:hover { background: var(--brand-ink); }
+    .cal-cell.cal-empty { cursor: default; }
+    .cal-dot {
+        position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+        width: 4px; height: 4px; border-radius: 50%;
+        background: var(--brand); opacity: .7;
+    }
+    .cal-cell.cal-selected .cal-dot { background: #fff; opacity: .8; }
+</style>
+<script src="/js/calendar.js"></script>

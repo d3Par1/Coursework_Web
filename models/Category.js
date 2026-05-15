@@ -84,3 +84,21 @@ class Category {
 }
 
 module.exports = Category;
+
+// PATCH: findByUserIdWithMonthly — added per SPEC §7
+Category.findByUserIdWithMonthly = function(user_id, month = null) {
+  const m = month || new Date().toISOString().slice(0, 7);
+  return db.prepare(`
+    SELECT c.*,
+           COALESCE((
+             SELECT SUM(t.amount)
+             FROM transactions t
+             WHERE t.category_id = c.id
+               AND t.user_id     = ?
+               AND strftime('%Y-%m', t.date) = ?
+           ), 0) AS monthly_total
+    FROM categories c
+    WHERE c.user_id = ? OR c.user_id IS NULL
+    ORDER BY c.type, c.name
+  `).all(user_id, m, user_id);
+};

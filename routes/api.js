@@ -84,6 +84,24 @@ router.get('/export/json', requireAuth, (req, res) => {
     });
 });
 
+// ── GET /api/transactions/calendar ───────────────────────────────────────────
+// Returns { "YYYY-MM-DD": count } for the given month
+router.get('/transactions/calendar', requireAuth, (req, res) => {
+    const userId = req.session.userId;
+    const month  = req.query.month || new Date().toISOString().slice(0, 7);
+
+    const rows = Transaction.findFiltered(userId, {
+        dateFrom: `${month}-01`,
+        dateTo:   `${month}-31`,
+    });
+
+    const counts = {};
+    for (const r of rows) {
+        counts[r.date] = (counts[r.date] || 0) + 1;
+    }
+    res.json(counts);
+});
+
 // ── POST /api/transactions/notify ─────────────────────────────────────────────
 // Manually trigger budget check + email notification
 router.post('/transactions/notify', requireAuth, async (req, res) => {
