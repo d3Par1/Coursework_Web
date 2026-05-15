@@ -152,13 +152,13 @@ footer.bg-light {
 :root[data-theme="dark"] .navbar { background: var(--paper) !important; border-color: var(--rule) !important; }
 :root[data-theme="dark"] .form-control,
 :root[data-theme="dark"] .form-select {
-  background: var(--surface);
+  background-color: var(--surface);
   color: var(--ink);
   border-color: var(--rule-strong);
 }
 :root[data-theme="dark"] .form-control:focus,
 :root[data-theme="dark"] .form-select:focus {
-  background: var(--surface);
+  background-color: var(--surface);
   color: var(--ink);
   border-color: var(--brand);
   box-shadow: 0 0 0 0.2rem oklch(0.72 0.08 175 / 0.20);
