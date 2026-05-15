@@ -214,6 +214,25 @@ footer.bg-light {
   color: var(--ink-soft);
 }
 
+/* .btn-primary contrast on dark — the brand lightens to oklch(0.72) for
+   dark legibility, but Bootstrap's default --bs-btn-color: #fff means
+   white text sits on light teal at ~2.5:1 contrast (fails WCAG AA).
+   Flip the text to near-black so the brand surface becomes the bright
+   element and the label remains readable. */
+:root[data-theme="dark"] .btn-primary {
+  --bs-btn-color: #0d0e11;
+  --bs-btn-hover-color: #0d0e11;
+  --bs-btn-active-color: #0d0e11;
+  font-weight: 600;
+}
+
+/* Bootstrap's .form-select embeds its chevron SVG with stroke=#343a40 —
+   dark grey on dark surface is nearly invisible. Replace the data URI
+   with one stroked in --ink-soft so the dropdown affordance is legible. */
+:root[data-theme="dark"] .form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23b7b3a9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+}
+
 /* Bootstrap modal scaffolding defaults to a white --bs-modal-bg which leaks
    through in dark mode (dark inputs floating in a stark white dialog).
    Re-token .modal-content and invert the close-button glyph. */
