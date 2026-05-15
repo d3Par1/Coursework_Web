@@ -1,6 +1,7 @@
 <%# views/categories/index.ejs %>
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h1><i class="bi bi-tags"></i> Categories</h1>
+  <p class="text-uppercase fw-semibold mb-1" style="color:var(--brand);font-size:11px;letter-spacing:.1em;">Organize</p>
+  <h1 class="mb-0" style="letter-spacing:-0.02em">Categories</h1>
   <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
     <i class="bi bi-plus-lg"></i> Add Category
   </button>
@@ -34,15 +35,13 @@
   <% [['exp', expense], ['inc', income]].forEach(([tab, list], i) => { %>
     <div class="tab-pane fade <%= i===0 ? 'show active' : '' %>" id="<%= tab %>-tab" role="tabpanel">
       <% if (list.length === 0) { %>
-        <div class="text-center py-5 px-3">
-          <div class="mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
-               style="width:64px;height:64px;border-radius:16px;background:var(--brand-soft);color:var(--brand)">
-            <i class="bi bi-tags" style="font-size:28px"></i>
-          </div>
-          <h5 class="fw-semibold mb-1">No categories yet</h5>
-          <p class="text-secondary mb-3">Add your first category to organize transactions.</p>
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">+ New category</button>
-        </div>
+        <%- include('../partials/empty-state', {
+        icon:     'bi-tags',
+        title:    'No categories yet',
+        message:  'Add your first category to organize transactions.',
+        ctaLabel: '+ New category',
+        ctaUrl:   '#addCategoryModal'
+        }) %>
       <% } else { %>
         <div class="row g-3">
           <% list.forEach(cat => { %>
@@ -90,62 +89,7 @@
   <% }); %>
 </div>
 
-  <!-- INCOME TAB -->
-  <div class="tab-pane fade" id="income-tab" role="tabpanel">
-    <div class="card">
-      <div class="card-body p-0">
-        <% if (income.length === 0) { %>
-          <p class="text-muted text-center py-4">No income categories yet.</p>
-        <% } else { %>
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead class="table-light">
-              <tr>
-                <th>Name</th>
-                <th>Icon</th>
-                <th>Color</th>
-                <th>Type</th>
-                <th class="text-end">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <% income.forEach(cat => { %>
-                <tr>
-                  <td><%= cat.name %></td>
-                  <td><%= cat.icon || '—' %></td>
-                  <td>
-                    <% if (cat.color) { %>
-                      <span class="badge" style="background:<%= cat.color %>"><%= cat.color %></span>
-                    <% } else { %>—<% } %>
-                  </td>
-                  <td><span class="badge bg-success">Income</span></td>
-                  <td class="text-end">
-                    <% if (cat.user_id) { %>
-                      <button class="btn btn-sm btn-outline-secondary me-1"
-                              data-bs-toggle="modal" data-bs-target="#editModal"
-                              data-id="<%= cat.id %>" data-name="<%= cat.name %>"
-                              data-type="<%= cat.type %>" data-icon="<%= cat.icon || '' %>"
-                              data-color="<%= cat.color || '' %>">
-                        <i class="bi bi-pencil"></i>
-                      </button>
-                      <form action="/categories/<%= cat.id %>/delete" method="POST" class="d-inline"
-                            onsubmit="return confirm('Delete category \'<%= cat.name %>\'?')">
-                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                      </form>
-                    <% } else { %>
-                      <span class="badge bg-secondary">System</span>
-                    <% } %>
-                  </td>
-                </tr>
-              <% }); %>
-              </tbody>
-            </table>
-          </div>
-        <% } %>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <!-- Add Category Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1">

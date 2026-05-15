@@ -1,4 +1,5 @@
-<%# Reusable empty-state. Locals: icon, title, message, ctaLabel, ctaUrl %>
+<%# Reusable empty-state. Locals: icon, title, message, ctaLabel, ctaUrl
+    ctaUrl starting with '#' opens a Bootstrap modal instead of navigating. %>
 <div class="text-center py-5 px-3">
   <div class="mx-auto mb-3 d-inline-flex align-items-center justify-content-center"
        style="width:64px;height:64px;border-radius:16px;background:var(--brand-soft);color:var(--brand)">
@@ -9,6 +10,11 @@
     <%= message %>
   </p>
   <% if (typeof ctaLabel !== 'undefined' && ctaLabel) { %>
-    <a href="<%= ctaUrl %>" class="btn btn-primary"><%= ctaLabel %></a>
+    <% if (typeof ctaUrl !== 'undefined' && ctaUrl && ctaUrl.startsWith('#')) { %>
+      <button class="btn btn-primary"
+              data-bs-toggle="modal" data-bs-target="<%= ctaUrl %>"><%= ctaLabel %></button>
+    <% } else { %>
+      <a href="<%= ctaUrl %>" class="btn btn-primary"><%= ctaLabel %></a>
+    <% } %>
   <% } %>
 </div>
