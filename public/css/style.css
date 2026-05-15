@@ -182,6 +182,38 @@ footer.bg-light {
 :root[data-theme="dark"] .border-bottom,
 :root[data-theme="dark"] .border-top { border-color: var(--rule) !important; }
 
+/* Bootstrap .form-text has its own --bs-form-text-color token that
+   defaults to a faded grey — it is not caught by .text-secondary
+   overrides, so help text under inputs ("3-letter ISO code", "Starting
+   amount on this account") becomes invisible on dark surfaces. */
+:root[data-theme="dark"] .form-text {
+  color: var(--ink-soft);
+}
+
+/* .card-header reads --bs-card-cap-bg and --bs-card-border-color which
+   stay light in dark mode, making the header blend invisibly into the
+   card body. Re-token to a subtle tint over the surface plus a visible
+   separator. */
+:root[data-theme="dark"] .card {
+  --bs-card-cap-bg: oklch(0.30 0.005 175);
+  --bs-card-border-color: var(--rule);
+  --bs-card-color: var(--ink);
+}
+:root[data-theme="dark"] .card-header,
+:root[data-theme="dark"] .card-footer {
+  border-color: var(--rule) !important;
+  color: var(--ink);
+}
+
+/* Bootstrap .input-group-text (used for currency-prefix icons like the
+   coin glyph in Transaction → Amount) inherits light-mode tokens by
+   default — it stays nearly white-on-white-on-dark without override. */
+:root[data-theme="dark"] .input-group-text {
+  background: var(--paper);
+  border-color: var(--rule-strong);
+  color: var(--ink-soft);
+}
+
 /* Bootstrap modal scaffolding defaults to a white --bs-modal-bg which leaks
    through in dark mode (dark inputs floating in a stark white dialog).
    Re-token .modal-content and invert the close-button glyph. */
