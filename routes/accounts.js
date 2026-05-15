@@ -22,14 +22,18 @@ const accountRules = [
     .isFloat().withMessage('Balance must be a number'),
 ];
 
-// GET /accounts
+// GET /accounts (optional ?type=cash|card|savings filters the visible list,
+// but `total` always reflects the full balance across all accounts).
 router.get('/', (req, res) => {
   const accounts = Account.findByUserId(req.session.userId);
   const total = Account.getTotalBalance(req.session.userId);
+  const allowedTypes = new Set(['cash', 'card', 'savings']);
+  const type = allowedTypes.has(req.query.type) ? req.query.type : '';
   res.render('accounts/index', {
     title: 'Accounts',
     accounts,
     total,
+    filters: { type },
   });
 });
 

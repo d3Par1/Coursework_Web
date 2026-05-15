@@ -1,7 +1,7 @@
-<div class="d-flex justify-content-between align-items-end mb-4">
+<div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
   <div>
     <p class="text-uppercase fw-semibold mb-1" style="color:var(--brand);font-size:11px;letter-spacing:.1em;">Overview</p>
-    <h1 class="mb-0" style="letter-spacing:-0.02em">Dashboard</h1>
+    <h1 class="mb-0" style="letter-spacing:-0.02em;padding-bottom:6px;">Dashboard</h1>
   </div>
   <a href="/transactions/new" class="btn btn-primary">+ New transaction</a>
 </div>
@@ -32,7 +32,7 @@
 
 <div class="row g-3 mb-4">
   <div class="col-lg-8">
-    <div class="card h-100">
+    <div class="card h-100 d-flex flex-column">
       <div class="card-header d-flex justify-content-between align-items-center bg-transparent" style="border-color:var(--rule)">
         <h5 class="mb-0">Recent activity</h5>
         <a href="/transactions" class="btn btn-sm btn-outline-secondary">View all</a>
@@ -77,7 +77,7 @@
   </div>
 
   <div class="col-lg-4">
-    <div class="card h-100">
+    <div class="card h-100 d-flex flex-column">
       <div class="card-header bg-transparent" style="border-color:var(--rule)">
         <h5 class="mb-0">Exchange rates</h5>
       </div>
@@ -110,7 +110,7 @@
 
 <div class="row g-3 mb-4">
   <div class="col-lg-5">
-    <div class="card h-100">
+    <div class="card h-100 d-flex flex-column">
       <div class="card-header bg-transparent" style="border-color:var(--rule)">
         <h5 class="mb-0">Expenses by category — <%= month %></h5>
       </div>
@@ -123,7 +123,7 @@
   </div>
 
   <div class="col-lg-7">
-    <div class="card h-100">
+    <div class="card h-100 d-flex flex-column">
       <div class="card-header bg-transparent" style="border-color:var(--rule)">
         <h5 class="mb-0">Income vs expense (₴) — last 6 months</h5>
       </div>

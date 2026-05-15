@@ -46,8 +46,8 @@ class Transaction {
              c.color AS category_color,
              a.name AS account_name, a.currency
       FROM transactions t
-      JOIN categories c ON t.category_id = c.id
-      JOIN accounts a ON t.account_id = a.id
+             LEFT JOIN categories c ON t.category_id = c.id
+             LEFT JOIN accounts a ON t.account_id = a.id
       WHERE t.user_id = ?
       ORDER BY t.date DESC, t.created_at DESC
     `).all(user_id);
@@ -63,8 +63,8 @@ class Transaction {
              c.color AS category_color,
              a.name AS account_name, a.currency
       FROM transactions t
-      JOIN categories c ON t.category_id = c.id
-      JOIN accounts a ON t.account_id = a.id
+             LEFT JOIN categories c ON t.category_id = c.id
+             LEFT JOIN accounts a ON t.account_id = a.id
       WHERE t.user_id = ?
     `;
     const params = [user_id];

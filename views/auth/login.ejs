@@ -64,7 +64,9 @@
 
       <button class="btn btn-primary w-100 py-2 mb-3" type="submit" style="font-size:15px">Sign in</button>
 
-      <p class="text-center text-secondary small mb-0">
+      <%- include('../partials/provider-buttons') %>
+
+      <p class="text-center text-secondary small mb-0 mt-4">
         Don't have an account?
         <a href="/auth/register" class="text-decoration-none" style="color:var(--brand);font-weight:600">Create one</a>
       </p>

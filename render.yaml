@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: finance-app
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: develop
+    autoDeploy: true
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DB_PATH
+        value: ./finance.db
+      # OAuth providers — optional. Code degrades gracefully when these are
+      # unset (buttons hide, callback routes return 503). Set them in the
+      # Render dashboard once you've created the Google OAuth client and
+      # the Telegram bot. See README "OAuth setup" for the walkthrough.
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: OAUTH_CALLBACK_BASE
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_USERNAME
+        sync: false
