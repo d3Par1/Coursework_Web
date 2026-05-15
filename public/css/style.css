@@ -188,6 +188,28 @@ footer.bg-light {
 :root[data-theme="dark"] .border-bottom,
 :root[data-theme="dark"] .border-top { border-color: var(--rule) !important; }
 
+/* Bootstrap modal scaffolding defaults to a white --bs-modal-bg which leaks
+   through in dark mode (dark inputs floating in a stark white dialog).
+   Re-token .modal-content and invert the close-button glyph. */
+:root[data-theme="dark"] .modal-content {
+  --bs-modal-bg: var(--surface);
+  --bs-modal-color: var(--ink);
+  --bs-modal-border-color: var(--rule);
+  --bs-modal-header-border-color: var(--rule);
+  --bs-modal-footer-border-color: var(--rule);
+}
+:root[data-theme="dark"] .modal-backdrop.show { opacity: 0.7; background-color: #000; }
+:root[data-theme="dark"] .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* ClearType subpixel antialiasing on Windows Chromium produces visible
+   colored fringes on light-on-dark text — force grayscale AA in dark mode. */
+:root[data-theme="dark"] body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 /* ============================================================
    OAuth provider buttons
    ============================================================ */
