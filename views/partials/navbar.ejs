@@ -57,20 +57,44 @@
             </button>
           </li>
           <% if (locals.currentUser) { %>
-            <li class="nav-item d-flex align-items-center gap-2 me-lg-2 mb-2 mb-lg-0">
-              <a href="/auth/profile" class="d-flex align-items-center gap-2 text-decoration-none" style="min-width:0;">
-                <span style="width:28px;height:28px;border-radius:50%;background:var(--brand-soft);
-                             color:var(--brand-ink);display:inline-flex;align-items:center;
-                             justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;">
-                  <%= initials(currentUser.name) %>
-                </span>
-                <span class="small text-truncate" style="color:var(--ink-soft);max-width:140px;"><%= currentUser.name %></span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <form action="/auth/logout" method="POST" class="d-inline">
-                <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
-              </form>
+            <li class="nav-item dropdown user-menu">
+              <button class="btn btn-sm user-menu-trigger" type="button"
+                      data-bs-toggle="dropdown" aria-expanded="false"
+                      aria-label="Account menu">
+      <span class="user-menu-avatar">
+        <%= initials(currentUser.name) %>
+      </span>
+                <span class="user-menu-name d-none d-xxl-inline">
+        <%= currentUser.name.split(' ').slice(-1)[0] %>
+      </span>
+                <i class="bi bi-chevron-down user-menu-caret" aria-hidden="true"></i>
+              </button>
+
+              <div class="dropdown-menu dropdown-menu-end user-menu-panel">
+                <div class="user-menu-header">
+                  <div class="user-menu-header-avatar">
+                    <%= initials(currentUser.name) %>
+                  </div>
+                  <div class="user-menu-header-meta">
+                    <div class="user-menu-header-name"><%= currentUser.name %></div>
+                    <div class="user-menu-header-email"><%= currentUser.email %></div>
+                  </div>
+                </div>
+
+                <a class="dropdown-item" href="/auth/profile">
+                  <i class="bi bi-person-circle" aria-hidden="true"></i>
+                  Profile &amp; security
+                </a>
+
+                <div class="dropdown-divider"></div>
+
+                <form action="/auth/logout" method="POST" class="user-menu-logout">
+                  <button type="submit" class="dropdown-item">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                    Sign out
+                  </button>
+                </form>
+              </div>
             </li>
           <% } else { %>
             <li class="nav-item mb-2 mb-lg-0">
