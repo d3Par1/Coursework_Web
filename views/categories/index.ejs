@@ -50,11 +50,7 @@
                 <div style="width:42px;height:42px;border-radius:11px;background:<%= cat.color || '#888' %>;
                         color:#fff;display:inline-flex;align-items:center;justify-content:center;
                         font-size:18px;font-weight:600;margin-bottom:12px">
-                  <% if (cat.icon && cat.icon.startsWith('bi-')) { %>
-                    <i class="bi <%= cat.icon %>" style="font-size:20px"></i>
-                  <% } else { %>
-                    <%= cat.icon || cat.name.charAt(0) %>
-                  <% } %>
+                  <%= cat.icon || cat.name.charAt(0) %>
                 </div>
                 <div class="fw-semibold"><%= cat.name %></div>
                 <div class="small mt-auto pt-2 border-top mt-3"
