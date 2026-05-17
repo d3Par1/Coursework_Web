@@ -1,0 +1,10 @@
+UPDATE categories SET icon = '🛒' WHERE user_id IS NULL AND name = 'Food & Dining';
+UPDATE categories SET icon = '🚌' WHERE user_id IS NULL AND name = 'Transportation';
+UPDATE categories SET icon = '🏠' WHERE user_id IS NULL AND name = 'Housing';
+UPDATE categories SET icon = '🎬' WHERE user_id IS NULL AND name = 'Entertainment';
+UPDATE categories SET icon = '❤️'  WHERE user_id IS NULL AND name = 'Healthcare';
+UPDATE categories SET icon = '💼' WHERE user_id IS NULL AND name = 'Salary';
+UPDATE categories SET icon = '💻' WHERE user_id IS NULL AND name = 'Freelance';
+UPDATE categories SET icon = '📈' WHERE user_id IS NULL AND name = 'Investments';
+UPDATE categories SET icon = '🎁' WHERE user_id IS NULL AND name = 'Gifts';
+UPDATE categories SET icon = '💵' WHERE user_id IS NULL AND name = 'Other Income';
