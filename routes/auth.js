@@ -244,6 +244,18 @@ if (telegramEnabled) {
     const payload = req.method === 'POST' ? req.body : req.query;
     const result = verifyTelegramAuth(payload);
     if (!result.valid) {
+      const ageSeconds = payload && payload.auth_date
+        ? Math.floor(Date.now() / 1000) - Number(payload.auth_date)
+        : null;
+      console.error('[telegram-auth] REJECTED', {
+        reason: result.reason,
+        method: req.method,
+        payloadKeys: payload ? Object.keys(payload) : [],
+        tgUserId: payload && payload.id,
+        ageSeconds,
+        botUsernameEnv: process.env.TELEGRAM_BOT_USERNAME,
+        tokenLength: (process.env.TELEGRAM_BOT_TOKEN || '').length,
+      });
       logAuthEvent(req, {
         event: 'login_failed_telegram',
         email: null,
