@@ -43,6 +43,10 @@ app.use(helmet({
     },
   },
   crossOriginEmbedderPolicy: false,
+  // OAuth popups (Telegram Login Widget, Google Identity) need to navigate
+  // window.opener after auth. Default `same-origin` orphans them — popup
+  // closes silently and the callback URL is never hit.
+  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
 }));
 
 // View engine
