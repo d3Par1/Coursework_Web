@@ -19,6 +19,17 @@ app.set('trust proxy', 1);
 // Initialize database (runs schema on first start)
 require('./config/database');
 
+// Optional auto-seed for Render free tier (ephemeral disk wipes DB on redeploy).
+// Runs only when AUTO_SEED_DEMO=true AND the users table is empty — never
+// overwrites real data.
+if (process.env.AUTO_SEED_DEMO === 'true') {
+  const { seedDemo, isDatabaseEmpty } = require('./scripts/seed-demo');
+  if (isDatabaseEmpty()) {
+    const result = seedDemo();
+    console.log(`[auto-seed] Empty DB detected → seeded demo user (id=${result.userId}, ${result.txCount} transactions).`);
+  }
+}
+
 // Security headers. CSP allows our CDN deps (Bootstrap, Chart.js, Telegram
 // Login Widget, Google Fonts) and inline scripts because templates use legacy
 // onclick handlers; nonce-based CSP is a future hardening pass.
@@ -122,6 +133,10 @@ app.use((req, res, next) => {
 
 // Masthead strip — date + live FX rates above the navbar (silent on failure).
 app.use(require('./middleware/fxStrip'));
+
+// Token-protected admin endpoints (status, reseed). NOT behind requireAuth —
+// authenticates via ADMIN_TOKEN query/body param instead.
+app.use('/admin', require('./routes/admin'));
 
 // Routes (auth first, then protected routes)
 app.use('/auth', require('./routes/auth'));

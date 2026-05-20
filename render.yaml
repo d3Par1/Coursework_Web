@@ -15,6 +15,15 @@ services:
         generateValue: true
       - key: DB_PATH
         value: ./finance.db
+      # Auto-seed demo user on first boot when the users table is empty.
+      # Render free tier has ephemeral disk — DB gets wiped on every redeploy,
+      # so without this flag the deployed site would have nothing to log into.
+      - key: AUTO_SEED_DEMO
+        value: 'true'
+      # Token for /admin/status and /admin/reseed endpoints. Render will
+      # generate a random value on first deploy; copy it from the dashboard.
+      - key: ADMIN_TOKEN
+        generateValue: true
       # OAuth providers — optional. Code degrades gracefully when these are
       # unset (buttons hide, callback routes return 503). Set them in the
       # Render dashboard once you've created the Google OAuth client and
