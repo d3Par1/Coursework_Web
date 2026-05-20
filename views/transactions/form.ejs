@@ -35,10 +35,12 @@
 
                     <div class="mb-3">
                         <label class="form-label">Account *</label>
-                        <select name="account_id" class="form-select" required>
+                        <select name="account_id" class="form-select" id="txAccount" required>
                             <option value="">Select account...</option>
                             <% accounts.forEach(acc => { %>
-                                <option value="<%= acc.id %>" <%= (oldInput.account_id == acc.id) ? 'selected' : '' %>>
+                                <option value="<%= acc.id %>"
+                                        data-currency="<%= acc.currency %>"
+                                        <%= (oldInput.account_id == acc.id) ? 'selected' : '' %>>
                                     <%= acc.name %> (<%= money(acc.balance, acc.currency) %>)
                                 </option>
                             <% }); %>
@@ -67,12 +69,17 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Amount (UAH) *</label>
+                        <label class="form-label" id="amountLabel">
+                            Amount <span id="amountCurrency" class="text-secondary"></span> *
+                        </label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-currency-exchange"></i></span>
                             <input type="number" name="amount" class="form-control" step="0.01" min="0.01"
                                    value="<%= oldInput.amount || '' %>" required placeholder="0.00">
                         </div>
+                        <small class="form-text text-secondary">
+                            Charged in the selected account's currency.
+                        </small>
                     </div>
 
                     <div class="mb-3">
@@ -145,3 +152,17 @@
     .cal-cell.cal-selected .cal-dot { background: #fff; opacity: .8; }
 </style>
 <script src="/js/calendar.js"></script>
+<script>
+(function () {
+    const sel = document.getElementById('txAccount');
+    const tag = document.getElementById('amountCurrency');
+    if (!sel || !tag) return;
+    function syncCurrency() {
+        const opt = sel.options[sel.selectedIndex];
+        const cur = opt && opt.dataset ? opt.dataset.currency : '';
+        tag.textContent = cur ? '(' + cur + ')' : '';
+    }
+    sel.addEventListener('change', syncCurrency);
+    syncCurrency();
+})();
+</script>
