@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   const userId = req.session.userId;
 
   const accounts = Account.findByUserId(userId);
-  const total = Account.getTotalBalance(userId);
+  const total = await Account.getTotalBalance(userId);
 
   const allTx = Transaction.findByUserId(userId);
   const recent = allTx.slice(0, 10);

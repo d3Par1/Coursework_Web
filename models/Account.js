@@ -1,5 +1,6 @@
 // models/Account.js
 const db = require('../config/database');
+const { fetchRates } = require('../services/currencyService');
 
 class Account {
   static create({ user_id, name, type, currency, balance = 0 }) {
@@ -22,11 +23,33 @@ class Account {
     ).all(user_id);
   }
 
-  static getTotalBalance(user_id) {
-    const row = db.prepare(
-      'SELECT COALESCE(SUM(balance), 0) AS total FROM accounts WHERE user_id = ?'
-    ).get(user_id);
-    return row.total;
+  static async getTotalBalance(user_id, targetCurrency = 'UAH') {
+    const accounts = db.prepare(
+      'SELECT balance, currency FROM accounts WHERE user_id = ?'
+    ).all(user_id);
+
+    if (accounts.length === 0) return 0;
+
+    const target = targetCurrency.toUpperCase();
+    const allSame = accounts.every(a => (a.currency || 'UAH').toUpperCase() === target);
+    if (allSame) {
+      return accounts.reduce((s, a) => s + a.balance, 0);
+    }
+
+    try {
+      const { rates } = await fetchRates(target);
+      return accounts.reduce((sum, a) => {
+        const cur = (a.currency || 'UAH').toUpperCase();
+        if (cur === target) return sum + a.balance;
+        const rate = rates[cur];
+        if (!rate) return sum;
+        return sum + a.balance / rate;
+      }, 0);
+    } catch {
+      return accounts
+        .filter(a => (a.currency || 'UAH').toUpperCase() === target)
+        .reduce((s, a) => s + a.balance, 0);
+    }
   }
 
   static update(id, user_id, { name, type, currency }) {

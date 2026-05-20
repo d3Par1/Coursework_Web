@@ -24,9 +24,9 @@ const accountRules = [
 
 // GET /accounts (optional ?type=cash|card|savings filters the visible list,
 // but `total` always reflects the full balance across all accounts).
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const accounts = Account.findByUserId(req.session.userId);
-  const total = Account.getTotalBalance(req.session.userId);
+  const total = await Account.getTotalBalance(req.session.userId);
   const allowedTypes = new Set(['cash', 'card', 'savings']);
   const type = allowedTypes.has(req.query.type) ? req.query.type : '';
   res.render('accounts/index', {
