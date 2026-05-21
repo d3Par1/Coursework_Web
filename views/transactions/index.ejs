@@ -134,8 +134,8 @@
 
     <% items.forEach(tx => { %>
       <div class="d-flex align-items-center gap-3 px-3 py-2 border-top" style="border-color:var(--rule)!important">
-        <span class="badge rounded-pill d-inline-flex align-items-center gap-2"
-              style="background:#f5f1e6;color:var(--ink-soft);border:1px solid var(--rule);font-weight:500">
+        <span class="badge rounded-pill d-inline-flex align-items-center gap-2 category-badge"
+              style="background:var(--cat-badge-bg);color:var(--ink-soft);border:1px solid var(--rule);font-weight:500">
           <span style="width:18px;height:18px;border-radius:50%;background:<%= tx.category_color || '#888' %>;
                   color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center">
             <%= (tx.category_name || '?').charAt(0) %>
