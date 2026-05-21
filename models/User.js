@@ -32,9 +32,20 @@ class User {
 
   static findById(id) {
     return db.prepare(
-      `SELECT id, name, email, avatar_url, provider, google_id, telegram_id, created_at
+      `SELECT id, name, email, avatar_url, provider, google_id, telegram_id, is_admin, created_at
        FROM users WHERE id = ?`
     ).get(id);
+  }
+
+  static findAll() {
+    return db.prepare(
+      `SELECT id, name, email, provider, google_id, telegram_id, is_admin, created_at
+       FROM users ORDER BY created_at DESC`
+    ).all();
+  }
+
+  static setAdmin(userId, isAdmin) {
+    db.prepare('UPDATE users SET is_admin = ? WHERE id = ?').run(isAdmin ? 1 : 0, userId);
   }
 
   static findByGoogleId(googleId) {

@@ -35,9 +35,10 @@
             ['/categories',   'Categories'],
             ['/budgets',      'Budgets'],
           ];
+          if (currentUser.isAdmin) items.push(['/admin/users', 'Admin']);
           const here = locals.currentPath || ''; %>
           <% items.forEach(([href, label]) => {
-               const active = here === href; %>
+               const active = here === href || (href === '/admin/users' && here.startsWith('/admin')); %>
             <li class="nav-item">
               <a class="nav-link <%= active ? 'active fw-semibold' : '' %>"
                  href="<%= href %>"

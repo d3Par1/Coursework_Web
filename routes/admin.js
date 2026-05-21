@@ -8,6 +8,8 @@
 const express = require('express');
 const { seedDemo, DEMO_EMAIL, DEMO_PASSWORD } = require('../scripts/seed-demo');
 const db = require('../config/database');
+const User = require('../models/User');
+const { requireAdmin } = require('../middleware/auth');
 const router = express.Router();
 
 function requireToken(req, res, next) {
@@ -60,6 +62,42 @@ router.get('/reseed', requireToken, (req, res) => {
   } catch (err) {
     res.status(500).send(`Seed failed: ${err.message}`);
   }
+});
+
+// ────────────────────────────────────────────────────────────────────
+// Session-based admin UI (separate from token-protected ops above).
+// Visible only to users with users.is_admin = 1.
+// ────────────────────────────────────────────────────────────────────
+
+router.get('/users', requireAdmin, (req, res) => {
+  const users = User.findAll();
+  res.render('admin/users', { title: 'Users — Admin', users });
+});
+
+router.post('/users/:id/toggle-admin', requireAdmin, (req, res) => {
+  const targetId = parseInt(req.params.id, 10);
+  if (!Number.isFinite(targetId) || targetId === req.session.userId) {
+    req.flash('error', 'Cannot toggle your own admin role.');
+    return res.redirect('/admin/users');
+  }
+  const target = User.findById(targetId);
+  if (!target) {
+    req.flash('error', 'User not found.');
+    return res.redirect('/admin/users');
+  }
+  User.setAdmin(targetId, !target.is_admin);
+  req.flash('success', `${target.email} is ${target.is_admin ? 'no longer' : 'now'} an admin.`);
+  res.redirect('/admin/users');
+});
+
+router.get('/auth-events', requireAdmin, (req, res) => {
+  const events = db.prepare(
+    `SELECT id, user_id, email, event, provider, ip, user_agent, created_at
+     FROM auth_events
+     ORDER BY created_at DESC
+     LIMIT 100`
+  ).all();
+  res.render('admin/auth-events', { title: 'Auth events — Admin', events });
 });
 
 module.exports = router;

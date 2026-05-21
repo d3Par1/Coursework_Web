@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+  <div>
+    <p class="text-uppercase fw-semibold mb-1" style="color:var(--brand);font-size:11px;letter-spacing:.1em;">Admin</p>
+    <h1 class="mb-0" style="letter-spacing:-0.02em;padding-bottom:6px;">Users</h1>
+    <p class="text-secondary small mb-0">All registered accounts (<%= users.length %>)</p>
+  </div>
+  <a href="/admin/auth-events" class="btn btn-outline-secondary">
+    <i class="bi bi-shield-lock"></i> View auth events
+  </a>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0 align-middle">
+      <thead>
+        <tr>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">ID</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">Name</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">Email</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">Provider</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">Role</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">Joined</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(u => { %>
+          <tr>
+            <td class="num text-secondary"><%= u.id %></td>
+            <td class="fw-medium"><%= u.name %></td>
+            <td class="text-secondary"><%= u.email %></td>
+            <td>
+              <% if (u.provider === 'google') { %>
+                <span class="badge bg-light text-dark border">Google</span>
+              <% } else if (u.provider === 'telegram') { %>
+                <span class="badge bg-info-subtle text-info-emphasis">Telegram</span>
+              <% } else { %>
+                <span class="badge bg-light text-secondary border">Local</span>
+              <% } %>
+            </td>
+            <td>
+              <% if (u.is_admin) { %>
+                <span class="badge bg-success-subtle text-success-emphasis">Admin</span>
+              <% } else { %>
+                <span class="badge bg-light text-secondary border">User</span>
+              <% } %>
+            </td>
+            <td class="text-secondary small"><%= dateLabel(u.created_at) %></td>
+            <td class="text-end">
+              <% if (u.id !== currentUser.id) { %>
+                <form action="/admin/users/<%= u.id %>/toggle-admin" method="POST" class="d-inline">
+                  <button class="btn btn-sm btn-outline-secondary" type="submit"
+                          title="<%= u.is_admin ? 'Revoke admin' : 'Grant admin' %>">
+                    <%= u.is_admin ? 'Revoke admin' : 'Make admin' %>
+                  </button>
+                </form>
+              <% } else { %>
+                <span class="text-secondary small">(you)</span>
+              <% } %>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>

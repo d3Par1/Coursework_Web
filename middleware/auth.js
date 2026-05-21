@@ -9,7 +9,8 @@ function setCurrentUser(req, res, next) {
     res.locals.currentUser = {
       id: req.session.userId,
       name: req.session.userName,
-      email: req.session.userEmail
+      email: req.session.userEmail,
+      isAdmin: Boolean(req.session.isAdmin),
     };
   } else {
     res.locals.currentUser = null;
@@ -28,4 +29,18 @@ function requireAuth(req, res, next) {
   next();
 }
 
-module.exports = { setCurrentUser, requireAuth };
+/**
+ * Require admin role. Must be combined AFTER requireAuth.
+ * Returns 403 instead of redirecting — admin pages aren't user-discoverable.
+ */
+function requireAdmin(req, res, next) {
+  if (!req.session.userId) {
+    return res.redirect('/auth/login');
+  }
+  if (!req.session.isAdmin) {
+    return res.status(403).render('errors/403', { title: 'Forbidden' });
+  }
+  next();
+}
+
+module.exports = { setCurrentUser, requireAuth, requireAdmin };

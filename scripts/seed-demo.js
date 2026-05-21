@@ -30,8 +30,8 @@ function seedDemo() {
 
     const hash = bcrypt.hashSync(DEMO_PASSWORD, 10);
     const userResult = db.prepare(
-      `INSERT INTO users (name, email, password_hash, provider)
-       VALUES (?, ?, ?, 'local')`
+      `INSERT INTO users (name, email, password_hash, provider, is_admin)
+       VALUES (?, ?, ?, 'local', 1)`
     ).run('Demo User', DEMO_EMAIL, hash);
     const userId = userResult.lastInsertRowid;
 

@@ -108,6 +108,7 @@ function completeLogin(req, res, user, { redirectTo = '/', flashMsg, event = 'lo
     req.session.userId = user.id;
     req.session.userName = user.name;
     req.session.userEmail = user.email;
+    req.session.isAdmin = Boolean(user.is_admin);
     logAuthEvent(req, { event, userId: user.id, email: user.email, provider });
     if (flashMsg) req.flash('success', flashMsg);
     res.redirect(redirectTo);

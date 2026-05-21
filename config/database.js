@@ -28,6 +28,7 @@ const userMigrations = [
   ['telegram_id', 'TEXT'],
   ['avatar_url', 'TEXT'],
   ['provider', "TEXT NOT NULL DEFAULT 'local'"],
+  ['is_admin', 'INTEGER NOT NULL DEFAULT 0'],
 ];
 
 for (const [column, definition] of userMigrations) {

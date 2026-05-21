@@ -1,0 +1,51 @@
+<div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+  <div>
+    <p class="text-uppercase fw-semibold mb-1" style="color:var(--brand);font-size:11px;letter-spacing:.1em;">Admin</p>
+    <h1 class="mb-0" style="letter-spacing:-0.02em;padding-bottom:6px;">Auth events</h1>
+    <p class="text-secondary small mb-0">Last <%= events.length %> events across all users</p>
+  </div>
+  <a href="/admin/users" class="btn btn-outline-secondary">
+    <i class="bi bi-people"></i> View users
+  </a>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0 align-middle">
+      <thead>
+        <tr>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">When</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">Event</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">User</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">Provider</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">IP</th>
+          <th style="font-size:11px;letter-spacing:.08em" class="text-uppercase text-secondary fw-semibold">User-Agent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% events.forEach(e => { %>
+          <tr>
+            <td class="text-secondary small num"><%= dateTime(e.created_at) %></td>
+            <td>
+              <% const tone = e.event.includes('failed') ? 'text-danger' : (e.event === 'login' || e.event === 'register' ? 'text-success' : ''); %>
+              <code class="<%= tone %>"><%= e.event %></code>
+            </td>
+            <td>
+              <% if (e.user_id) { %>
+                <span class="text-secondary small">#<%= e.user_id %></span>
+              <% } %>
+              <%= e.email || '<no email>' %>
+            </td>
+            <td>
+              <span class="badge bg-light text-secondary border" style="font-weight:500"><%= e.provider %></span>
+            </td>
+            <td class="text-secondary num small"><%= e.ip || '—' %></td>
+            <td class="text-secondary small" style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              <%= e.user_agent || '—' %>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
