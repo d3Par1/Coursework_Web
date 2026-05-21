@@ -23,6 +23,7 @@
   --muted:             #8a857d;
   --rule:              #e6e0d2;
   --rule-strong:       #d8d0bf;
+  --cat-badge-bg:      #f5f1e6;
 }
 
 body {
@@ -138,6 +139,7 @@ footer.bg-light {
   --muted:             #7a766d;
   --rule:              #2c2f37;
   --rule-strong:       #3a3e48;
+  --cat-badge-bg:      #2c2f37;
 }
 
 :root[data-theme="dark"] .card { background: var(--surface); border-color: var(--rule); color: var(--ink); }
@@ -384,4 +386,3 @@ footer.bg-light {
 .auth-event-tag.telegram { background: oklch(0.94 0.04 220); color: oklch(0.40 0.12 220); }
 :root[data-theme="dark"] .auth-event-tag.google  { background: oklch(0.30 0.06 250); color: oklch(0.85 0.08 250); }
 :root[data-theme="dark"] .auth-event-tag.telegram { background: oklch(0.30 0.06 220); color: oklch(0.85 0.10 220); }
-
