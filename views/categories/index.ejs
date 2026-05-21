@@ -59,7 +59,7 @@
                 </div>
                 <% if (!cat.user_id) { %>
                   <span class="position-absolute top-0 end-0 m-2 badge rounded-pill"
-                        style="background:#f1ede3;color:var(--muted);font-weight:400">system</span>
+                        style="background:var(--cat-badge-bg);color:var(--muted);font-weight:400">system</span>
                 <% } else { %>
                   <div class="position-absolute top-0 end-0 m-2 d-flex gap-1">
                     <button class="btn btn-sm btn-outline-secondary py-0 px-1"
@@ -180,3 +180,4 @@
     document.getElementById('editColor').value = btn.dataset.color || '#6c757d';
   });
 </script>
+
